@@ -12,7 +12,7 @@ dist
 dist-ssr
 *.local
 
-#Ignore .env files
+# Ignore .env files
 .env
 
 # Editor directories and files

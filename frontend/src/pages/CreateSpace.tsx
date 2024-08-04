@@ -1,5 +1,5 @@
-import { CreateSpaceInfo } from "./CreateSpaceInfo";
-import { PreviewCard } from "./PreviewCard";
+import { CreateSpaceInfo } from "../component/CreateSpaceInfo";
+import { PreviewCard } from "../component/PreviewCard";
 
 export function CreateSpace(){
     return (

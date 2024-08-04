@@ -47,7 +47,6 @@ export function CreateSpaceInfo():ReactElement{
                 body:formdata,
             }
         )
-        console.log(response)
         if(response.ok){
             const data=await response.json()
             setSpaceImage(data.secure_url)
@@ -141,21 +140,21 @@ export function CreateSpaceInfo():ReactElement{
           
           <div className="mb-2">
             <p>Collect Socail link</p>
-            <div className={`w-12 h-7 bg-gray-200 rounded-full p-1 flex items-center ${spaceSocialLinks?'justify-end bg-blue-400':'justify-start'}`} onClick={()=>setSpaceSocialLinks(!spaceSocialLinks)}>
+            <div className={`w-12 h-7 bg-gray-200 rounded-full p-1 flex items-center ${spaceSocialLinks?'justify-end bg-blue-500':'justify-start'}`} onClick={()=>setSpaceSocialLinks(!spaceSocialLinks)}>
             <motion.div layout className={` w-5 h-5 bg-white rounded-full` }></motion.div>
             </div>
           </div>
           
           <div  className="mb-2">
             <p>Collect star ratings</p>
-            <div className={`w-12 h-7 bg-gray-200 rounded-full p-1 flex items-center ${spaceStarRating?'justify-end bg-blue-400':'justify-start'}`} onClick={()=>setSpaceStarRating(!spaceStarRating)}>
+            <div className={`w-12 h-7 bg-gray-200 rounded-full p-1 flex items-center ${spaceStarRating?'justify-end bg-blue-500':'justify-start'}`} onClick={()=>setSpaceStarRating(!spaceStarRating)}>
             <motion.div layout className={` w-5 h-5 bg-white rounded-full` }></motion.div>
             </div>
           </div>
 
           <div className="mb-2">
             <p>Choose a theme</p>
-            <div className={`w-12 h-7 bg-gray-200 rounded-full p-1 flex items-center ${spaceTheme?'justify-end bg-blue-400':'justify-start'}`} onClick={()=>setSpaceTheme(!spaceTheme)}>
+            <div className={`w-12 h-7 bg-gray-200 rounded-full p-1 flex items-center ${spaceTheme?'justify-end bg-blue-500':'justify-start'}`} onClick={()=>setSpaceTheme(!spaceTheme)}>
             <motion.div layout className={` w-5 h-5 bg-white rounded-full` }></motion.div>
             </div>
           </div>

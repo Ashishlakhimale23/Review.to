@@ -1,4 +1,4 @@
-import { atom } from "recoil";
+import { atom, StoreID } from "recoil";
 
 export const SpaceNameState = atom<string>({
   key: "spaceName",
@@ -97,4 +97,9 @@ export const SpaceTheme = atom<boolean>({
     }
     return false;
   })()
+})
+
+export const LoggedState = atom<boolean>({
+   key:"LoggedState",
+   default:false
 })
