@@ -1,10 +1,8 @@
 import { useRecoilValue } from "recoil"
-import {SpaceCustomMessage, SpaceImageState, SpaceQuestion, SpaceTitleState} from "../store/atoms"
+import {SpaceState} from "../store/atoms"
 export function PreviewCard(){
-    const spaceImage= useRecoilValue(SpaceImageState)
-    const spaceTitle = useRecoilValue(SpaceTitleState)
-    const spaceCustomMessage = useRecoilValue(SpaceCustomMessage)
-    const spaceQuestion = useRecoilValue(SpaceQuestion)
+    const space= useRecoilValue(SpaceState)
+    const {spaceImage,spaceTitle,spaceCustomMessage,spaceQuestion} = space
     return(
         <>
         <div className="w-full md:max-w-96 h-full border-2 border-black font-space mb-9 shadow-2xl rounded-md p-3 sm:py-10 sm:px-8">

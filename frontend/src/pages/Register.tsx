@@ -1,7 +1,7 @@
 import { useCallback,useEffect,useState } from "react";
 import {  useNavigate } from "react-router-dom";
 import { ToastContainer,toast } from "react-toastify";
-import {auth} from "../component/FirebaseAuth"
+import {auth} from "../utils/FirebaseAuth"
 import "react-toastify/dist/ReactToastify.css";
 import {z} from "zod"
 import {createUserWithEmailAndPassword, signInWithPopup , GoogleAuthProvider} from "firebase/auth"
@@ -113,12 +113,12 @@ const handlegooglesubmit = async()=>{
 
   await signInWithPopup(auth,provider).then(async (result)=>{
     const idtoken:string | undefined = await result.user.getIdToken(true) 
-    
+     
     if(!String(idtoken).length  || idtoken === undefined){
       return toast.error("error while signing up")
     }
     try{
-    await axios.post(`${process.env.BASE_URL}/user/signup`,{idtoken:idtoken}).then((resp)=>{
+    await axios.post(`${process.env.BASE_URL}/user/signup`,{idtoken:idtoken,username:result.user.displayName}).then((resp)=>{
                   if(Object.values(resp.data).includes("created account")){
                    localStorage.setItem("AccessToken",idtoken) 
                       setLogged(true)

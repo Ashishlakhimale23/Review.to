@@ -1,34 +1,14 @@
 import { ReactElement, useEffect} from "react"
 import { useRecoilState } from "recoil"
-import {SpaceNameState,SpaceImageState,SpaceTitleState,SpaceCustomMessage,SpaceQuestion, SpaceSocialLinks, SpaceStarRating, SpaceTheme} from "../store/atoms"
+import {SpaceState} from "../store/atoms"
 import {motion} from "framer-motion"
 
 export function CreateSpaceInfo():ReactElement{
-    const [spaceName,setSpaceName]=useRecoilState(SpaceNameState)
-    const [spaceImage,setSpaceImage]=useRecoilState(SpaceImageState)
-    const [spaceTitle,setSpaceTitle]=useRecoilState(SpaceTitleState)
-    const [spaceCustomMessage,setSpaceCustomMessage] = useRecoilState(SpaceCustomMessage)
-    const [spaceQuestion,setSpaceQuestion] = useRecoilState<string[]>(SpaceQuestion)
-    const [spaceSocialLinks,setSpaceSocialLinks] = useRecoilState(SpaceSocialLinks)
-    const [spaceStarRating,setSpaceStarRating] = useRecoilState(SpaceStarRating)
-    const [spaceTheme,setSpaceTheme] = useRecoilState(SpaceTheme)
-
+    const [space,setSpace]=useRecoilState(SpaceState)
+    const {spaceName,spaceImage,spaceCustomMessage,spaceSocialLinks,spaceQuestion,spaceStarRating,spaceTheme,spaceTitle} = space
     useEffect(()=>{
-      const space = {
-        spaceName:spaceName,
-        spaceImage:spaceImage,
-        spaceTitle:spaceTitle,
-        spaceCustomMessage:spaceCustomMessage,
-        spaceQuestion:spaceQuestion,
-        spaceSocialLinks:spaceSocialLinks,
-        spaceStarRating:spaceStarRating,
-        spaceTheme:spaceTheme
-      }
-
       localStorage.setItem("space",JSON.stringify(space))
-    },[spaceName,spaceImage,spaceTitle,spaceCustomMessage,spaceQuestion,spaceSocialLinks,spaceStarRating,spaceTheme])
-
-
+    },[space])
 
 
     const handleImageChange = async(e:any) =>{
@@ -49,7 +29,7 @@ export function CreateSpaceInfo():ReactElement{
         )
         if(response.ok){
             const data=await response.json()
-            setSpaceImage(data.secure_url)
+            setSpace((prevSpace)=>({...prevSpace,spaceImage:data.secure_url}))
         }else{
             throw new Error("Failed to upload the space logo")
         }
@@ -74,7 +54,7 @@ export function CreateSpaceInfo():ReactElement{
             <input
               type="text"
               value={spaceName}
-              onChange={(e) => setSpaceName(e.target.value)}
+              onChange={(e) => setSpace((prevSpace)=>({...prevSpace,spaceName:e.target.value}))}
               className="w-full outline-none border-2 border-gray-200 focus:ring-black focus:ring-2 px-3 py-1 rounded-md"
             />
           </div>
@@ -95,7 +75,7 @@ export function CreateSpaceInfo():ReactElement{
             <input type="text"
             className="w-full outline-none border-2 border-gray-200 focus:ring-black focus:ring-2 px-3 py-1 rounded-md"
             value={spaceTitle}
-            onChange={(e)=>setSpaceTitle(e.target.value)}
+            onChange={(e)=>setSpace((prevSpace)=>({...prevSpace,spaceTitle:e.target.value}))}
              />
           </div>
 
@@ -106,7 +86,7 @@ export function CreateSpaceInfo():ReactElement{
             placeholder="write a warm message to your customer, and give them simple directions on how to make the best testimonial."
             rows={5}
             value={spaceCustomMessage}
-            onChange={(e)=>setSpaceCustomMessage(e.target.value)}
+            onChange={(e)=>setSpace((prevSpace)=>({...prevSpace,spaceCustomMessage:e.target.value}))}
             ></textarea>
           </div>
 
@@ -126,7 +106,7 @@ export function CreateSpaceInfo():ReactElement{
                         console.log(e.target.id)
                         const array = [...spaceQuestion]
                         array[parseInt(e.target.id)] = e.target.value
-                        setSpaceQuestion(array)
+                        setSpace((prevSpace)=>({...prevSpace,spaceQuestion:array}))
                     }}
                     />
                      
@@ -134,27 +114,27 @@ export function CreateSpaceInfo():ReactElement{
             }
             </div>
             <button className={`${spaceQuestion.length>=5?'invisible':'visible'}`} onClick={()=>{
-                setSpaceQuestion([...spaceQuestion,""])
+                setSpace((prevSpace)=>({...prevSpace,spaceQuestion:[...spaceQuestion,""]}))
             }}>Add upto 5</button>
           </div>
           
           <div className="mb-2">
             <p>Collect Socail link</p>
-            <div className={`w-12 h-7 bg-gray-200 rounded-full p-1 flex items-center ${spaceSocialLinks?'justify-end bg-blue-500':'justify-start'}`} onClick={()=>setSpaceSocialLinks(!spaceSocialLinks)}>
+            <div className={`w-12 h-7 bg-gray-200 rounded-full p-1 flex items-center ${spaceSocialLinks?'justify-end bg-blue-500':'justify-start'}`} onClick={()=>setSpace((prevSpace)=>({...prevSpace,spaceSocialLinks:!spaceSocialLinks}))}>
             <motion.div layout className={` w-5 h-5 bg-white rounded-full` }></motion.div>
             </div>
           </div>
           
           <div  className="mb-2">
             <p>Collect star ratings</p>
-            <div className={`w-12 h-7 bg-gray-200 rounded-full p-1 flex items-center ${spaceStarRating?'justify-end bg-blue-500':'justify-start'}`} onClick={()=>setSpaceStarRating(!spaceStarRating)}>
+            <div className={`w-12 h-7 bg-gray-200 rounded-full p-1 flex items-center ${spaceStarRating?'justify-end bg-blue-500':'justify-start'}`} onClick={()=>setSpace((prevSpace)=>({...prevSpace,spaceStarRating:!spaceStarRating}))}>
             <motion.div layout className={` w-5 h-5 bg-white rounded-full` }></motion.div>
             </div>
           </div>
 
           <div className="mb-2">
             <p>Choose a theme</p>
-            <div className={`w-12 h-7 bg-gray-200 rounded-full p-1 flex items-center ${spaceTheme?'justify-end bg-blue-500':'justify-start'}`} onClick={()=>setSpaceTheme(!spaceTheme)}>
+            <div className={`w-12 h-7 bg-gray-200 rounded-full p-1 flex items-center ${spaceTheme?'justify-end bg-blue-500':'justify-start'}`} onClick={()=>setSpace((prevSpace)=>({...prevSpace,spaceTheme:!spaceTheme}))}>
             <motion.div layout className={` w-5 h-5 bg-white rounded-full` }></motion.div>
             </div>
           </div>
