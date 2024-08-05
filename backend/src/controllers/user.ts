@@ -1,25 +1,26 @@
 import { Request,Response } from "express"
 import { User } from "../model/user"
-import { UserType } from "../types/usertype"
 import {config} from "dotenv"
 import admin from "../utils/firebaseadmin" 
-import { firestore } from "firebase-admin"
 config()
 
-export const handlesignin = async(req:Request<{},{},{idtoken:string}>,res:Response)=>{
-    console.log(req.body.idtoken)
-       const idtoken = await admin.auth().verifyIdToken(req.body.idtoken) 
-       
+export const handlesignin = async(req:Request<{},{},{idtoken:string,username:string}>,res:Response)=>{
+    let username:string | undefined = req.body.username
+    const idtoken = await admin.auth().verifyIdToken(req.body.idtoken) 
+    if(username === undefined){
+       let index =  idtoken.email!.indexOf("@")
+       username= idtoken.email!.substring(0,index)
+    }   
        const userexist =await User.findOne({firebaseUid:idtoken.uid,email:idtoken.email})  
        if(userexist){
           return res.json({message:"user already exists"}).status(409)
        }
        else{
        try{
-        const Newuser = new User( {
+        const Newuser = new User({
             email:idtoken.email,
-            firebaseUid:idtoken.uid
-            
+            firebaseUid:idtoken.uid,
+            username:username
         })
          await Newuser.save().then(()=>{
             return res.status(200).json({message:"created account"})
@@ -36,8 +37,11 @@ export const handlesignin = async(req:Request<{},{},{idtoken:string}>,res:Respon
 
 export const handlelogin=async(req:Request<{},{},{idtoken:string}>,res:Response)=>{
     const idtoken = await admin.auth().verifyIdToken(req.body.idtoken)
+    console.log(idtoken.email,idtoken.uid)
     const userexist= await User.findOne({firebaseUid:idtoken.uid,email:idtoken.email}) 
-    if(!userexist ){
+    console.log(userexist)
+    if(!userexist){
+        console.log(userexist)
         return res.json({message:"user doesnt exist"}).status(404)
     }
     else{
