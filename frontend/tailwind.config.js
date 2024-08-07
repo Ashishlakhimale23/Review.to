@@ -8,6 +8,12 @@ export default {
     extend: {
       fontFamily:{
         space:[" 'Space Mono' ", "monospace"]
+      },
+      backgroundColor:{
+        silver:"#323436"
+      },
+      borderColor:{
+         silver:"#323436"
       }
     },
   },

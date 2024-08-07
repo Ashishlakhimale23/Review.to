@@ -1,13 +1,15 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import {auth} from "./FirebaseAuth"
-
+declare module 'axios' {
+  export interface AxiosRequestConfig {
+    _retry?: boolean;
+  }
+}
 export let api = axios.create({
     baseURL:process.env.BASE_URL
 })
 
-interface ExtendedAxiosRequestConfig extends AxiosRequestConfig {
-    _retry:boolean
-}
+
 
 class concurrency{
      queue :{resolve:Function,reject:Function}[]
@@ -49,20 +51,38 @@ const refreshToken = async()=>{
     localStorage.setItem("AccessToken",idtoken)
     return idtoken;
 }
+
+api.interceptors.request.use(function(config) {
+  const token = localStorage.getItem("AccessToken");
+  if (token) {
+    
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+}, function(error) {
+  return Promise.reject(error);
+});
+
 api.interceptors.response.use(
     response=>response,
     async function (error :AxiosError) {
-        const originalrequest = error.config as ExtendedAxiosRequestConfig 
-        if(error.response?.status === 401 && !originalrequest._retry){
+      try{
+        const originalrequest = error.config as AxiosRequestConfig
+        console.log(originalrequest)
+        if(error.response?.status === 401 && !originalrequest._retry ){
             originalrequest._retry = true
-            const idtoken = concurrencynow.execute(refreshToken) 
+            const idtoken =await concurrencynow.execute(refreshToken) 
             api.defaults.headers.common["Authorization"] =`Bearer ${idtoken}`
             return api(originalrequest) 
         }
-        else{
+        else if(error.response?.status === 401 && originalrequest._retry){
             window.location.href = '/login'
             return Promise.reject(error)
+        }else{
+          return Promise.reject(error)
         }
-        
+        }catch(error){
+          return Promise.reject(error)
+        }
     }
 )

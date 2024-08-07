@@ -1,15 +1,98 @@
-import { ReactElement, useEffect} from "react"
+import { ReactElement, useEffect, useRef} from "react"
+import {toast,ToastContainer} from "react-toastify"
 import { useRecoilState } from "recoil"
-import {SpaceState} from "../store/atoms"
+import "react-toastify/dist/ReactToastify.css";
+import {PublishedState, SpaceState} from "../store/atoms"
 import {motion} from "framer-motion"
-
+import zod from "zod"
+import { PublishedSpace, Space } from "../types/types"
+import { api } from "../utils/AxiosApi";
+import {defaultSpace} from "../store/atoms"
+import { useNavigate } from "react-router-dom";
 export function CreateSpaceInfo():ReactElement{
     const [space,setSpace]=useRecoilState(SpaceState)
+    const [published,setPublished] = useRecoilState<PublishedSpace>(PublishedState)
+    const navigate = useNavigate()
     const {spaceName,spaceImage,spaceCustomMessage,spaceSocialLinks,spaceQuestion,spaceStarRating,spaceTheme,spaceTitle} = space
+    const ButtonRef =useRef<HTMLButtonElement>(null) 
+
     useEffect(()=>{
       localStorage.setItem("space",JSON.stringify(space))
+      return ()=>{
+        localStorage.removeItem("space")
+      }
     },[space])
 
+    const DataToVerify = zod.object({
+       spaceName:zod.string({message:"Requires a string"}),
+       spaceImage:zod.string({message:"Requires a string"}),
+       spaceCustomMessage:zod.string({message:"Requires a string"}),
+       spaceQuestion:zod.array(zod.string({message:"Requires a array string"})),
+       spaceSocialLinks:zod.boolean(),
+       spaceStarRating:zod.boolean(),
+       spaceTheme:zod.boolean()
+    }) 
+
+   const DataVerification =(data:Space)=>{
+    const ParsedData = DataToVerify.safeParse(data)
+    return ParsedData
+   }
+
+  const handleDataSubmit = async()=>{
+    
+    if (!spaceName.length) {
+      return toast.error("Fill the field space name");
+    }
+    if (!spaceTitle.length) {
+      return toast.error("Fill the field space title");
+    }
+    if (!spaceCustomMessage.length) {
+      return toast.error("Fill the field custom message");
+    }
+    
+    try {
+      const ParsedData = DataVerification(space);
+      if (!ParsedData.success) {
+        return toast.error(ParsedData.error.issues[0].message);
+      } else {
+        if (ButtonRef.current !== null) {
+          ButtonRef.current.disabled = true;
+          ButtonRef.current.textContent = "Uploading space...";
+        }
+        await api
+          .post(`${process.env.BASE_URL}/space/createspace`, { space: space })
+          .then((resp) => {
+            if (resp.status == 201) {
+              setSpace(defaultSpace)
+              setPublished((prevPublished)=>({...prevPublished,Published:true,PublishedName:resp.data.spaceName,PublishedLink:resp.data.spaceLinks}))
+              navigate("/dashboard")
+              return toast.success("space uploaded");
+            }else{
+              setSpace(defaultSpace)
+              return toast.error(resp.data.message)
+            } 
+          })
+          .catch((error) => {
+           if (error.response) {
+             return toast.error(
+               error.response.data.message || "Error creating space"
+             );
+           } else if (error.request) {
+             return toast.error("No response from server. Please try again.");
+           } else {
+             return toast.error("Error setting up request. Please try again.");
+           } 
+          });
+      }
+    } catch (error) {
+      return toast.error("internal server error");
+    }finally{
+     if(ButtonRef.current !==null){
+      ButtonRef.current.disabled = false
+      ButtonRef.current.textContent = "create space"
+     }
+    }
+  } 
 
     const handleImageChange = async(e:any) =>{
         const file = e.target.files[0]
@@ -140,10 +223,11 @@ export function CreateSpaceInfo():ReactElement{
           </div>
 
           <div>
-              <button type="submit" className="w-full bg-black text-white py-3 rounded-md">Create space</button>
+              <button type="submit" disabled={false} className="w-full bg-black text-white py-3 rounded-md" ref={ButtonRef} onClick={handleDataSubmit}>Create space</button>
           </div>
 
         </div>
+        <ToastContainer/>
       </>
     );
 }

@@ -1,17 +1,7 @@
 import { atom} from "recoil";
+import { Space,PublishedSpace} from "../types/types";
 
-interface Space{
-  spaceName : string,
-  spaceImage : string,
-  spaceTitle : string,
-  spaceCustomMessage : string,
-  spaceQuestion: string[],
-  spaceSocialLinks :boolean,
-  spaceStarRating : boolean ,
-  spaceTheme :boolean 
-}
-
-const defaultSpace:Space = {
+export const defaultSpace:Space = {
   spaceName :'',
   spaceImage: "https://res.cloudinary.com/ddweepkue/image/upload/v1719301620/coursefiles/0cecfa5bd56a3a089467769c9ede571e.jpg",
   spaceTitle:'',
@@ -26,6 +16,12 @@ const defaultSpace:Space = {
   spaceTheme:false
 }
 
+export const defaultPublished:PublishedSpace = {
+  PublishedName:"",
+  PublishedLink:"",
+  Published:false
+}
+
 export const SpaceState = atom<Space>({ 
   key:"Space",
   default:(()=>{
@@ -37,4 +33,14 @@ export const SpaceState = atom<Space>({
 export const LoggedState = atom<boolean>({
    key:"LoggedState",
    default:false
+})
+
+export const PublishedState = atom<PublishedSpace>({
+  key:"PublishedState",
+  default:defaultPublished
+})
+
+export const DeleteState = atom<boolean>({
+  key:"DeleteState",
+  default:false
 })

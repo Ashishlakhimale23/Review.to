@@ -11,7 +11,11 @@ const user = new mongoose.Schema({
     firebaseUid:{
         type:String,
         required:true
-    }
+    },
+    space:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"space"
+    }]
     },{
     timestamps:true
 })
