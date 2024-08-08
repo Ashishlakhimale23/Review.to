@@ -47,7 +47,6 @@ let concurrencynow =new concurrency()
 
 const refreshToken = async()=>{
     const user = auth.currentUser
-    console.log(user)
     const idtoken:string  = await user?.getIdToken(true)!
     localStorage.setItem("AccessToken",idtoken)
     return idtoken;
@@ -75,6 +74,7 @@ api.interceptors.response.use(
             originalrequest._retry = true
             const idtoken =await concurrencynow.execute(refreshToken) 
             if(idtoken == undefined){
+              localStorage.removeItem('AccessToken')
               return window.location.href = "/login"
             }
             api.defaults.headers.common["Authorization"] =`Bearer ${idtoken}`

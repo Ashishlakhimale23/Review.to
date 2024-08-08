@@ -49,3 +49,9 @@ export const DeleteState = atom<DeleteSpace>({
   key:"DeleteState",
   default:defaultDeleteState
 })
+
+export const SettingsModal = atom<boolean>({
+  key:'SettingsModal',
+  default:false
+  
+})
