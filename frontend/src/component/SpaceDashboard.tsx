@@ -1,7 +1,7 @@
 import {  useSetRecoilState } from "recoil";
 import { DeleteState } from "../store/atoms";
-
-export function SpaceDashboard({image,spaceName}:{image:string,spaceName:string}){
+import {RemoveAnySpaces} from "../utils/RemoveAnySpaces"
+export function SpaceDashboard({image,spaceName,id}:{image:string,spaceName:string,id:string}){
   const setDeleteState = useSetRecoilState(DeleteState)
     return (
       <>
@@ -14,8 +14,11 @@ export function SpaceDashboard({image,spaceName}:{image:string,spaceName:string}
             <p className="sm:text-lg">Text</p>
           </div>
           <div className="pr-5 w-fit ">
-            <button className="text-xl font-semibold" onClick={()=>{
-              setDeleteState(true)
+            <button className="text-xl font-semibold " onClick={(e)=>{
+              e.stopPropagation()
+              console.log("clicked")
+              const name:string = RemoveAnySpaces(spaceName)
+              setDeleteState({DeleteStatus:true,DeleteValue:name,DeleteId:id})
             }}>x</button>
           </div>
         </div>

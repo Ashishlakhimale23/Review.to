@@ -1,5 +1,5 @@
 import { ReactElement, useEffect, useRef} from "react"
-import {toast,ToastContainer} from "react-toastify"
+import {toast} from "react-toastify"
 import { useRecoilState } from "recoil"
 import "react-toastify/dist/ReactToastify.css";
 import {PublishedState, SpaceState} from "../store/atoms"
@@ -227,7 +227,6 @@ export function CreateSpaceInfo():ReactElement{
           </div>
 
         </div>
-        <ToastContainer/>
       </>
     );
 }

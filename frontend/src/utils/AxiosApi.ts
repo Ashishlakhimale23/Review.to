@@ -47,15 +47,17 @@ let concurrencynow =new concurrency()
 
 const refreshToken = async()=>{
     const user = auth.currentUser
-    const idtoken:string = await user?.getIdToken(true)!
+    console.log(user)
+    const idtoken:string  = await user?.getIdToken(true)!
     localStorage.setItem("AccessToken",idtoken)
     return idtoken;
 }
 
 api.interceptors.request.use(function(config) {
-  const token = localStorage.getItem("AccessToken");
-  if (token) {
-    
+  const token :string | null  = localStorage.getItem("AccessToken");
+  if (token === null) {
+    window.location.href = '/login'
+  }else{
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
@@ -72,6 +74,9 @@ api.interceptors.response.use(
         if(error.response?.status === 401 && !originalrequest._retry ){
             originalrequest._retry = true
             const idtoken =await concurrencynow.execute(refreshToken) 
+            if(idtoken == undefined){
+              return window.location.href = "/login"
+            }
             api.defaults.headers.common["Authorization"] =`Bearer ${idtoken}`
             return api(originalrequest) 
         }

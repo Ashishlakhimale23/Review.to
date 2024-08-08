@@ -1,5 +1,5 @@
 import { atom} from "recoil";
-import { Space,PublishedSpace} from "../types/types";
+import { Space,PublishedSpace,DeleteSpace} from "../types/types";
 
 export const defaultSpace:Space = {
   spaceName :'',
@@ -22,6 +22,11 @@ export const defaultPublished:PublishedSpace = {
   Published:false
 }
 
+export const defaultDeleteState:DeleteSpace={
+  DeleteStatus:false,
+  DeleteValue:"",
+  DeleteId:'',
+}
 export const SpaceState = atom<Space>({ 
   key:"Space",
   default:(()=>{
@@ -40,7 +45,7 @@ export const PublishedState = atom<PublishedSpace>({
   default:defaultPublished
 })
 
-export const DeleteState = atom<boolean>({
+export const DeleteState = atom<DeleteSpace>({
   key:"DeleteState",
-  default:false
+  default:defaultDeleteState
 })

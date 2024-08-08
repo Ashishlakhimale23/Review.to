@@ -2,7 +2,8 @@ import './App.css'
 import { RecoilRoot } from "recoil"
 import { BrowserRouter as Router} from 'react-router-dom';
 import { Layout } from './component/Layout';
-import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
+import { ToastContainer } from 'react-toastify';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 function App() {
 
@@ -12,10 +13,11 @@ function App() {
       <RecoilRoot>
         <Router>
           <QueryClientProvider client={queryClient}>
-          <Layout />
-</QueryClientProvider>
+            <Layout />
+          </QueryClientProvider>
         </Router>
       </RecoilRoot>
+      <ToastContainer theme='dark'/>
     </>
   );
 }

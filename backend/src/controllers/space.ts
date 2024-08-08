@@ -50,7 +50,7 @@ export const GetAllSpaces = async (req:Request<{},{},{uid:string}>,res:Response)
     try{
         await User.findOne({firebaseUid:firebaseuid}).populate("space",'spaceName spaceImage').then((result)=>{
             console.log(result)
-            return res.status(201).json({data:result}).end()
+            return res.status(200).json({data:result}).end()
         }).catch((error)=>{
             return res.status(500).json({message:"couldnt find the user"})
         })
@@ -59,3 +59,25 @@ export const GetAllSpaces = async (req:Request<{},{},{uid:string}>,res:Response)
         return res.status(500).json({message:"internal server issue"})
     }
 }
+
+
+export const DeleteSpace = async(req:Request<{},{},{uid:string,Deleteid:string}>,res:Response )=>{
+    const Deleteid = req.body.Deleteid
+    const userFirebasuid = req.body.uid
+    try{
+        await space.findOneAndDelete({_id:Deleteid}).then(async ()=>{
+            await User.findOneAndUpdate({firebaseUid:userFirebasuid},{$pull:{'space':Deleteid}}).then(()=>{
+                return res.status(200).json({message:"Delete the space"})
+            }).catch((error)=>{
+                return res.status(500).json({message:'internal server error'})
+            })
+        }).catch((error)=>{
+            return res.status(500).json({message:"internal server error"})
+        })
+        
+    }catch(error){
+        return res.status(500).json({message:"internal server error"})
+    }
+
+}
+

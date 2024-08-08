@@ -1,3 +1,4 @@
+import { AxiosError, AxiosResponse } from "axios"
 
 export interface Space{
   spaceName : string,
@@ -15,4 +16,16 @@ export interface PublishedSpace{
   PublishedName :string, 
   PublishedLink :string,
   Published:boolean
+}
+
+export interface DeleteSpace{
+  DeleteStatus:boolean,
+  DeleteValue:string
+  DeleteId:string
+}
+
+
+export interface CustomAxiosError extends AxiosError{
+  response?:AxiosResponse<{message:string}>
+
 }
