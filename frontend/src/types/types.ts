@@ -2,7 +2,7 @@ import { AxiosError, AxiosResponse } from "axios"
 
 export interface Space{
   spaceName : string,
-  spaceImage : string,
+  spaceImage : File | string,
   spaceTitle : string,
   spaceCustomMessage : string,
   spaceQuestion: string[],

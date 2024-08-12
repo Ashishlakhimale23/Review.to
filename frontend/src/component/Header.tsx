@@ -45,6 +45,7 @@ export function Header():ReactElement{
             <div className="bg-silver text-white font-space px-2 py-2 rounded-md" >
               <button className=" px-[10px] py-2 hover:bg-white hover:text-black rounded-md w-full text-left"
               onClick={()=>{
+                setSettingModal(false)
                 navigate("/dashboard")
               }}
               >
@@ -56,6 +57,8 @@ export function Header():ReactElement{
               </button >
               <button className="px-[10px] py-2 hover:bg-white hover:text-black rounded-md w-full text-left"
               onClick={()=>{
+
+                setSettingModal(false)
                 localStorage.removeItem("AccessToken")
                 navigate("/login")
               }}

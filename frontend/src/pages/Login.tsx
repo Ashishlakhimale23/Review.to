@@ -78,6 +78,9 @@ function Login() {
             }).catch((error)=>{
                 const errorMessage:string = error.code
                 switch(errorMessage){
+                    case "auth/invalid-credential":
+                       toast.error("invaild credentials please check the signin method")
+                       break
                     case "auth/invalid-email":
                         toast.error("invalid-email")
                         break;
@@ -137,6 +140,9 @@ function Login() {
   }).catch((error)=>{
     const errorMessage:string = error.code
                 switch(errorMessage){ 
+                  case "auth/invalid-credential":
+                       toast.error("invaild credentials please check the signin method")
+                       break
                   case "auth/operation-not-supported-in-this-environment":
                         toast.error("http protocol is not supported.please use http")
                         break;

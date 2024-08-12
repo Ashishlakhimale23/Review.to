@@ -7,7 +7,7 @@ export function PreviewCard(){
         <>
         <div className="w-full md:max-w-96 h-full border-2 border-black font-space mb-9 shadow-2xl rounded-md p-3 sm:py-10 sm:px-8">
             <div className="flex justify-center mb-3">
-                <img src={spaceImage} alt="" className="w-14 h-14 rounded-full " />
+                <img src={typeof spaceImage === 'string' ? spaceImage : spaceImage instanceof File ? URL.createObjectURL(spaceImage) : ''}  alt="" className="w-14 h-14 rounded-full " />
             </div>
 
             <div className="mb-3">

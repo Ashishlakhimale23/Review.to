@@ -25,7 +25,6 @@ export function CreateSpaceInfo():ReactElement{
 
     const DataToVerify = zod.object({
        spaceName:zod.string({message:"Requires a string"}),
-       spaceImage:zod.string({message:"Requires a string"}),
        spaceCustomMessage:zod.string({message:"Requires a string"}),
        spaceQuestion:zod.array(zod.string({message:"Requires a array string"})),
        spaceSocialLinks:zod.boolean(),
@@ -39,7 +38,6 @@ export function CreateSpaceInfo():ReactElement{
    }
 
   const handleDataSubmit = async()=>{
-    
     if (!spaceName.length) {
       return toast.error("Fill the field space name");
     }
@@ -49,7 +47,7 @@ export function CreateSpaceInfo():ReactElement{
     if (!spaceCustomMessage.length) {
       return toast.error("Fill the field custom message");
     }
-    
+
     try {
       const ParsedData = DataVerification(space);
       if (!ParsedData.success) {
@@ -59,68 +57,63 @@ export function CreateSpaceInfo():ReactElement{
           ButtonRef.current.disabled = true;
           ButtonRef.current.textContent = "Uploading space...";
         }
+        const formData = new FormData();
+        Object.entries(space).forEach(([key, value]) => {
+          if (key === "spaceImage" && value instanceof File) {
+            formData.append("spaceImage", value);
+          } else if (Array.isArray(value)) {
+            value.forEach((item, index) =>
+              formData.append(`space[${key}][${index}]`, item)
+            );
+          } else {
+            formData.append(`space[${key}]`, value.toString());
+          }
+        });
         await api
-          .post(`${process.env.BASE_URL}/space/createspace`, { space: space })
+          .post(`${process.env.BASE_URL}/space/createspace`, formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
           .then((resp) => {
             if (resp.status == 201) {
-              setSpace(defaultSpace)
-              setPublished((prevPublished)=>({...prevPublished,Published:true,PublishedName:resp.data.spaceName,PublishedLink:resp.data.spaceLinks}))
-              navigate("/dashboard")
+              setSpace(defaultSpace);
+              setPublished((prevPublished) => ({
+                ...prevPublished,
+                Published: true,
+                PublishedName: resp.data.spaceName,
+                PublishedLink: resp.data.spaceLinks,
+              }));
+              navigate("/dashboard");
               return toast.success("space uploaded");
-            }else{
-              setSpace(defaultSpace)
-              return toast.error(resp.data.message)
-            } 
+            } else {
+              setSpace(defaultSpace);
+              return toast.error(resp.data.message);
+            }
           })
           .catch((error) => {
-           if (error.response) {
-             return toast.error(
-               error.response.data.message || "Error creating space"
-             );
-           } else if (error.request) {
-             return toast.error("No response from server. Please try again.");
-           } else {
-             return toast.error("Error setting up request. Please try again.");
-           } 
+            if (error.response) {
+              return toast.error(
+                error.response.data.message || "Error creating space"
+              );
+            } else if (error.request) {
+              return toast.error("No response from server. Please try again.");
+            } else {
+              return toast.error("Error setting up request. Please try again.");
+            }
           });
       }
     } catch (error) {
       return toast.error("internal server error");
-    }finally{
-     if(ButtonRef.current !==null){
-      ButtonRef.current.disabled = false
-      ButtonRef.current.textContent = "create space"
-     }
+    } finally {
+      if (ButtonRef.current !== null) {
+        ButtonRef.current.disabled = false;
+        ButtonRef.current.textContent = "create space";
+      }
     }
   } 
 
-    const handleImageChange = async(e:any) =>{
-        const file = e.target.files[0]
-        const upload_preset:string =process.env.UPLOAD_PRESET!
-        const api_key:string  =process.env.API_KEY!
-        const cloudinary_name:string = process.env.CLOUDINARY_NAME!
-        let formdata = new FormData()
-        formdata.append("file",file)
-        formdata.append("upload_preset",upload_preset)
-        formdata.append("api_key",api_key)
-        try{
-        const response =await fetch(`https://api.cloudinary.com/v1_1/${cloudinary_name}/image/upload`,
-            {
-                method:"POST",
-                body:formdata,
-            }
-        )
-        if(response.ok){
-            const data=await response.json()
-            setSpace((prevSpace)=>({...prevSpace,spaceImage:data.secure_url}))
-        }else{
-            throw new Error("Failed to upload the space logo")
-        }
-        }catch(err){
-            throw err
-        }
-        
-    }
+    
     return (
       <>
         <div className="w-fit h-fit font-space lg:px-4">
@@ -145,10 +138,17 @@ export function CreateSpaceInfo():ReactElement{
           <div className="mb-2">
             <p>Space logo</p>
             <div className="space-x-8 flex items-center">
-               <img src={spaceImage} className="w-12 h-12 rounded-full" />
+               <img  src={typeof spaceImage === 'string' ? spaceImage : spaceImage instanceof File ? URL.createObjectURL(spaceImage) : ''} className="w-12 h-12 rounded-full" />
                <label htmlFor="inputimage" className=" border-2 border-gray-200 px-2 py-1 rounded-md h-fit "> 
                 change
-                <input type="file" id="inputimage" hidden  accept=".jpg ,.png ,jpeg" onChange={handleImageChange}/>
+                <input type="file" id="inputimage" hidden  accept=".jpg ,.png ,jpeg" size={5*1024*1024} onChange={(e)=>{
+                     const file = e.target.files?.[0] 
+                     console.log(file)
+                     if(file){
+                      console.log("setted file")
+                      setSpace((prevSpace)=>({...prevSpace,spaceImage:file}))
+                     }
+                 }}/>
                </label> 
             </div>
           </div>
