@@ -1,10 +1,12 @@
 import { Request,Response } from "express" 
-import {Space} from "../types/space"
+import {Space, SumbitReivew} from "../types/space"
 import { space } from "../model/space"
 import { User } from "../model/user"
 import { RemoveAnySpaces } from "../utils/RemoveAnySpaces"
 import cloudinary from "../utils/Cloudinary"
 import {Readable} from "stream"
+import { CloudinaryUpload } from "../utils/CloudinaryUpload"
+import { Review } from "../model/review"
 export const CreateSpace =async (req:Request<{},{},{space:Space,uid:string}>,res:Response)=>{
     const {spaceName,spaceCustomMessage,spaceImage,spaceQuestion,spaceSocialLinks,spaceStarRating,spaceTheme,spaceTitle}  = req.body.space
     const firebaseuid = req.body.uid
@@ -16,23 +18,12 @@ export const CreateSpace =async (req:Request<{},{},{space:Space,uid:string}>,res
     let spaceImage:string;
      
     if(req.file){
-        spaceImage =await new Promise<string>((resolve,reject)=>{
-        let uploadStream = cloudinary.v2.uploader.upload_stream({
-            upload_preset:process.env.UPLOAD_PRESET
-        },(err,res)=>{
-            if(err){
-                return reject(err)
-            } 
-            resolve(res?.secure_url!)
-        })
-         Readable.from(req.file?.buffer!).pipe(uploadStream)
-    })
+        spaceImage = await CloudinaryUpload(req.file)
+        console.log(spaceImage)
     }
-    
-    
 
     await space.countDocuments({spaceName:SpaceName}).then((resp)=>{
-        spaceLink = `http://review.to/${resp ? name+resp :name}` 
+        spaceLink = `${resp ? name+resp :name}` 
     }).then(()=>{
             
     const NewSpace  = new space({
@@ -41,7 +32,7 @@ export const CreateSpace =async (req:Request<{},{},{space:Space,uid:string}>,res
         spaceImage:spaceImage,
         spaceCustomMessage:spaceCustomMessage,
         spaceQuestion:spaceQuestion,
-        spaceSocialLink:spaceSocialLinks,
+        spaceSocialLinks:spaceSocialLinks,
         spaceStarRating:spaceStarRating,
         spaceTheme:spaceTheme,
         spaceLink:spaceLink
@@ -103,3 +94,66 @@ export const DeleteSpace = async(req:Request<{},{},{uid:string,Deleteid:string}>
 
 }
 
+
+export const getSpaceDetails =async(req:Request<{},{},{spacelink:string}>,res:Response)=>{
+    const spacelink = req.body.spacelink
+    console.log(spacelink)
+    if(!spacelink){
+        return res.status(500).json({message:"spacelink not provided"})
+    }
+    else{
+        try{
+            await space.findOne({spaceLink:spacelink}).then((resp)=>{
+                console.log(resp)
+                res.status(200).json({details:resp})
+            }).catch(err=>{
+                return res.status(500).json({message:"internal server error"})
+        })
+        }catch(error){
+            return res.status(500).json({message:"internal server error"})
+        }
+    }
+}
+
+export const submitReivew =async (req:Request,res:Response)=>{
+    const { Message,YourName,YourEmail,checkbox,StarRating,SocialLink,spacelink} = req.body 
+    const files = req.files as { [fieldname: string]: Express.Multer.File[] }
+    const AttachImage =files["AttachImage"]?.[0] 
+    const UploadPhoto= files["UploadPhoto"]?.[0]
+    let AttachLink 
+    let UploadPhotoLink
+    if(!UploadPhoto){
+        return res.status(500).json({message:"No upload photo provided"})
+    }
+    if(AttachImage){
+        try{
+        AttachLink = await CloudinaryUpload(AttachImage)
+        }catch(error){
+            return res.status(500).json({message:"Error while uploading file"})
+        }
+    }
+    try{
+        UploadPhotoLink = await CloudinaryUpload(UploadPhoto)
+        const newReview = new Review({
+            Message:Message,
+            YourEmail:YourEmail,
+            YourName:YourName,
+            StarRating:StarRating,
+            SocailLinks:SocialLink,
+            AttachedPhoto:AttachLink,
+            UploadedPhoto:UploadPhotoLink
+        })
+
+        await newReview.save().then(async (resp)=>{
+            await space.findOneAndUpdate({spaceLink:spacelink},{$push:{"Reviews":resp._id}}).then(()=>{
+                return res.status(200).json({ message: "create review" })
+            })
+
+        })
+    }catch(error){
+        return res.status(500).json({message:"internal server error"})
+    }
+
+
+
+}

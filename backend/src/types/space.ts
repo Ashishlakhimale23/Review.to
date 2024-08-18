@@ -1,3 +1,5 @@
+import multer from "multer"
+
 export interface Space{
   spaceName : string,
   spaceImage : string,
@@ -7,4 +9,15 @@ export interface Space{
   spaceSocialLinks :boolean,
   spaceStarRating : boolean ,
   spaceTheme :boolean 
+}
+
+export interface SumbitReivew{
+  Message:string,
+  AttachImage?:Express.Multer.File,
+  SocialLink?:string, 
+  YourName:string,
+  YourEmail:string,
+  UploadPhoto: Express.Multer.File ,
+  StarRating?:boolean[]
+
 }

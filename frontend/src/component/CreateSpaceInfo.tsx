@@ -1,7 +1,6 @@
 import { ReactElement, useEffect, useRef} from "react"
 import {toast} from "react-toastify"
-import { useRecoilState } from "recoil"
-import "react-toastify/dist/ReactToastify.css";
+import { useRecoilState, useSetRecoilState } from "recoil"
 import {PublishedState, SpaceState} from "../store/atoms"
 import {motion} from "framer-motion"
 import zod from "zod"
@@ -11,7 +10,7 @@ import {defaultSpace} from "../store/atoms"
 import { useNavigate } from "react-router-dom";
 export function CreateSpaceInfo():ReactElement{
     const [space,setSpace]=useRecoilState(SpaceState)
-    const [published,setPublished] = useRecoilState<PublishedSpace>(PublishedState)
+    const setPublished = useSetRecoilState<PublishedSpace>(PublishedState)
     const navigate = useNavigate()
     const {spaceName,spaceImage,spaceCustomMessage,spaceSocialLinks,spaceQuestion,spaceStarRating,spaceTheme,spaceTitle} = space
     const ButtonRef =useRef<HTMLButtonElement>(null) 
@@ -47,6 +46,9 @@ export function CreateSpaceInfo():ReactElement{
     if (!spaceCustomMessage.length) {
       return toast.error("Fill the field custom message");
     }
+    if(defaultSpace.spaceImage === spaceImage){
+      return toast.error("upload the space image")
+    }
 
     try {
       const ParsedData = DataVerification(space);
@@ -57,6 +59,7 @@ export function CreateSpaceInfo():ReactElement{
           ButtonRef.current.disabled = true;
           ButtonRef.current.textContent = "Uploading space...";
         }
+
         const formData = new FormData();
         Object.entries(space).forEach(([key, value]) => {
           if (key === "spaceImage" && value instanceof File) {
@@ -68,7 +71,8 @@ export function CreateSpaceInfo():ReactElement{
           } else {
             formData.append(`space[${key}]`, value.toString());
           }
-        });
+        })
+        console.log(formData)
         await api
           .post(`${process.env.BASE_URL}/space/createspace`, formData, {
             headers: {

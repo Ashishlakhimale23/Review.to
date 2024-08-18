@@ -42,13 +42,13 @@ export function DeleteSpace():ReactElement{
     const deleteMutation = useMutation<void,CustomAxiosError,string>({
       mutationFn:(Deleteid:string)=>DeleteApiRequest(Deleteid),
       onSuccess:()=>{
-
+      if(ButtonRef.current){
+        ButtonRef.current.disabled =false 
+        ButtonRef.current.innerText = "Delete Space"
+      }
         setDeleteSpace(defaultDeleteState)
-        ButtonRef.current!.innerText = "Delete the space"
-        ButtonRef.current!.disabled = true
         toast.success("Space deleted")
         queryClient.invalidateQueries({queryKey:['space']})
-
       },
       onError:(error)=>{
           if (error.response) {

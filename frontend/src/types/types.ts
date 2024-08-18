@@ -29,3 +29,15 @@ export interface CustomAxiosError extends AxiosError{
   response?:AxiosResponse<{message:string}>
 
 }
+
+export interface Submitform{
+  Message:string,
+  AttachImage:File | string,
+  SocialLink?:string, 
+  YourName:string,
+  YourEmail:string,
+  UploadPhoto : File | string,
+  checkbox : boolean,
+  StarRating :boolean[]
+
+}

@@ -9,27 +9,28 @@ import { BrowserRouter as Router,Routes,Route,useLocation} from 'react-router-do
 import { PageNotFound } from "../pages/PageNotFound";
 import { useRecoilValue } from "recoil";
 import { PublishedState } from "../store/atoms";
+import { SubmitReview } from "../pages/SubmitReview";
 
 export function Layout():ReactElement{
   const authtoken = localStorage.getItem("AccessToken")
   const {Published} = useRecoilValue(PublishedState)
   const location = useLocation()
   const header = ['/dashboard']
-  const Paths = ['/signup','/login','/createspace',"/dashboard",'/']
   
   authtoken ? header.push("/") : null
   Published ? header.splice(0,1) :null
     return (
       <>
-        {!Paths.includes(location.pathname) ? <PageNotFound /> : null}
         {header.includes(location.pathname) ? <Header /> : null}
           <Routes>
+            <Route element={<PageNotFound/>} path="*" />
             <Route element={authtoken ? <Dashboard /> : <Login />} path="/" />
             <Route element={<Signin />} path="/signup" />
             <Route element={<Login />} path="/login" />
             <Route element={<PrivateRoutes />}>
               <Route path="/createspace" element={<CreateSpace />} />
               <Route element={<Dashboard />} path="/dashboard"></Route>
+              <Route element={<SubmitReview/>} path={`/:spacelink`} /> 
             </Route>
           </Routes>
       </>

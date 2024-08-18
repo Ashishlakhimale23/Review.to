@@ -22,7 +22,7 @@ const Space = new mongoose.Schema({
         type:[String],
         required:true
     },
-    spaceSocialLink:{
+    spaceSocialLinks:{
         type:String,
         required:true
     },
@@ -36,9 +36,12 @@ const Space = new mongoose.Schema({
     },
     spaceLink:{
         type:String,
-        
         unique:true
-    }
+    },
+    Reviews:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'Review'
+    }]
     
 },{
     timestamps:true

@@ -1,11 +1,15 @@
-import { useRecoilValue } from "recoil"
-import {SpaceState} from "../store/atoms"
-export function PreviewCard(){
-    const space= useRecoilValue(SpaceState)
+import { useSetRecoilState } from "recoil"
+import { Space } from "../types/types"
+import { SubmitReviewModal } from "../store/atoms"
+export function PreviewCard({space}:{space:Space}){
     const {spaceImage,spaceTitle,spaceCustomMessage,spaceQuestion} = space
+    const setSubmitReviewModal = useSetRecoilState<boolean>(SubmitReviewModal)
+    
+    const pathname  = window.location.pathname
+
     return(
         <>
-        <div className="w-full md:max-w-96 h-full border-2 border-black font-space mb-9 shadow-2xl rounded-md p-3 sm:py-10 sm:px-8">
+        <div className="w-full md:max-w-96 h-fit border-2 border-black font-space mb-9 shadow-2xl rounded-md p-3 sm:py-10 sm:px-8">
             <div className="flex justify-center mb-3">
                 <img src={typeof spaceImage === 'string' ? spaceImage : spaceImage instanceof File ? URL.createObjectURL(spaceImage) : ''}  alt="" className="w-14 h-14 rounded-full " />
             </div>
@@ -31,7 +35,9 @@ export function PreviewCard(){
                 </div>
             </div>
 
-            <div><button className="w-full bg-black text-white py-2 rounded-md">send in text</button></div>
+            <div><button className="w-full bg-black text-white py-2 rounded-md" disabled={pathname === '/createspace'} onClick={()=>{
+                setSubmitReviewModal(true)
+            }}>send in text</button></div>
 
         </div>
         </>

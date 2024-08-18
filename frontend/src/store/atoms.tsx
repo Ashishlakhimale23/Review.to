@@ -55,3 +55,8 @@ export const SettingsModal = atom<boolean>({
   default:false
   
 })
+
+export const SubmitReviewModal = atom<boolean>({
+  key:"SubmitReviewModal",
+  default:true
+})
