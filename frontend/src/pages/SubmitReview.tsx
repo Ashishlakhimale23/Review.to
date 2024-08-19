@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { PreviewCard } from "../component/PreviewCard"
 import axios from "axios"
 import {toast} from "react-toastify"
@@ -9,19 +9,20 @@ import { useRecoilValue } from "recoil"
 import { SubmitReviewModal } from "../store/atoms"
 
 export function SubmitReview(){
+    let navigate =useNavigate()
     let {spacelink} = useParams()
     const reviewModal = useRecoilValue<boolean>(SubmitReviewModal)
-
-
+    
     const fetchSpaceInfo = async():Promise<Space>=>{
-        const response = await axios.post(`${process.env.BASE_URL}/space/getspacedetails`,{spacelink:spacelink})
+        const response = await axios.post(`${process.env.BASE_URL}/space/getspacedetails`,{spacelink:encodeURIComponent(spacelink!)})
         return response.data.details
     }
     let {data:space,isLoading,isError,error} = useQuery<Space,CustomAxiosError>({
         queryKey:['generatedinfo'],
         queryFn:fetchSpaceInfo,
+        retry:1
     }) 
-    console.log(space)
+  
     if(isLoading){
         return (
             <>
@@ -32,13 +33,17 @@ export function SubmitReview(){
    
     if(isError){
         if (error!.response) {
+          
+            navigate('/dashboard')
             return toast.error(
-               error!.response.data?.message || "Error creating space"
+               error!.response.data?.message || "Error fetching space"
              );
            } else if (error!.request) {
-             return toast.error("No response from server. Please try again.");
+             toast.error("No response from server. Please try again.");
+             navigate("/dashboard") 
            } else {
-             return toast.error("Error setting up request. Please try again.");
+              toast.error("Error setting up request. Please try again.");
+             navigate("/dashboard") 
            }
     }
 

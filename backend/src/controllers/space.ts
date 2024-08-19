@@ -8,7 +8,7 @@ import {Readable} from "stream"
 import { CloudinaryUpload } from "../utils/CloudinaryUpload"
 import { Review } from "../model/review"
 export const CreateSpace =async (req:Request<{},{},{space:Space,uid:string}>,res:Response)=>{
-    const {spaceName,spaceCustomMessage,spaceImage,spaceQuestion,spaceSocialLinks,spaceStarRating,spaceTheme,spaceTitle}  = req.body.space
+    const {spaceName,spaceCustomMessage,spaceQuestion,spaceSocialLinks,spaceStarRating,spaceTheme,spaceTitle}  = req.body.space
     const firebaseuid = req.body.uid
     console.log(firebaseuid) 
     try{
@@ -18,8 +18,11 @@ export const CreateSpace =async (req:Request<{},{},{space:Space,uid:string}>,res
     let spaceImage:string;
      
     if(req.file){
+        try{
         spaceImage = await CloudinaryUpload(req.file)
-        console.log(spaceImage)
+        }catch(error){
+            return res.status(500).json({message:"Error while uploading"})
+        }
     }
 
     await space.countDocuments({spaceName:SpaceName}).then((resp)=>{
@@ -78,13 +81,13 @@ export const DeleteSpace = async(req:Request<{},{},{uid:string,Deleteid:string}>
     const Deleteid = req.body.Deleteid
     const userFirebasuid = req.body.uid
     try{
-        await space.findOneAndDelete({_id:Deleteid}).then(async ()=>{
-            await User.findOneAndUpdate({firebaseUid:userFirebasuid},{$pull:{'space':Deleteid}}).then(()=>{
-                return res.status(200).json({message:"Delete the space"})
-            }).catch((error)=>{
-                return res.status(500).json({message:'internal server error'})
-            })
-        }).catch((error)=>{
+        await space.findOneAndDelete({_id:Deleteid}).then(async (resp)=>{
+            let Array = resp?.Reviews
+            await Review.deleteMany({_id:{$in:Array}})
+            await User.findOneAndUpdate({firebaseUid:userFirebasuid},{$pull:{'space':Deleteid}})
+            return res.status(200).json({message:"space deleted"})
+        }
+        ).catch((error)=>{
             return res.status(500).json({message:"internal server error"})
         })
         
@@ -103,12 +106,11 @@ export const getSpaceDetails =async(req:Request<{},{},{spacelink:string}>,res:Re
     }
     else{
         try{
-            await space.findOne({spaceLink:spacelink}).then((resp)=>{
-                console.log(resp)
-                res.status(200).json({details:resp})
-            }).catch(err=>{
-                return res.status(500).json({message:"internal server error"})
-        })
+            const spaceinfo  = await space.findOne({spaceLink:spacelink})        
+            if(spaceinfo){
+                return res.status(200).json({details:spaceinfo})
+            }
+            return res.status(500).json({message:"space not found"})
         }catch(error){
             return res.status(500).json({message:"internal server error"})
         }

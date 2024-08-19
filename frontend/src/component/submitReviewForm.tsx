@@ -12,10 +12,11 @@ interface submitReviewType extends Space{
 }
 export function SubmitReviewForm ({space}:{space:submitReviewType}){
   const {spaceImage,spaceQuestion,spaceStarRating,spaceSocialLinks,spacelink} = space
-  console.log(spaceSocialLinks)
   const SumbitButtonRef=useRef<HTMLButtonElement>(null)
   const setSubmitReviewModal = useSetRecoilState<boolean>(SubmitReviewModal)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const [attachImageBlob,setAttachImageBlob] = useState<string>("")
+  const [uploadImageBlob,setUploadImageBlob] = useState<string>("")
 
   const UserData = z.object({
     email :z.string().email().refine(
@@ -38,7 +39,8 @@ export function SubmitReviewForm ({space}:{space:submitReviewType}){
     YourEmail:"",
     UploadPhoto:defaultSpace.spaceImage,
     checkbox:false,
-    StarRating:[true,true,true,true,true]
+    StarRating:[true,true,true,true,true],
+    SocialLink:""
   }
 
   const [submitReview,setSubmitReview] = useState<Submitform>(submitReviewDefault)
@@ -62,10 +64,6 @@ export function SubmitReviewForm ({space}:{space:submitReviewType}){
   const submitMutation = useMutation<any,CustomAxiosError,FormData>({
     mutationFn : (formdata:FormData)=>submitreviewmethod(formdata),
     onSuccess:(data)=>{
-    if(SumbitButtonRef.current){
-      SumbitButtonRef.current.disabled =false 
-      SumbitButtonRef.current.innerText = "submit"
-    }
     setSubmitReview(submitReviewDefault)
     setSubmitReviewModal(false)
     },
@@ -90,6 +88,13 @@ export function SubmitReviewForm ({space}:{space:submitReviewType}){
       SumbitButtonRef.current.disabled = true 
       SumbitButtonRef.current.innerText = "Uploading the review..."
     }
+  }
+  if(submitMutation.isSuccess){
+    if(SumbitButtonRef.current){
+      SumbitButtonRef.current.disabled =false 
+      SumbitButtonRef.current.innerText = "Submit"
+    }
+
   }
   
   const submitForm=async()=>{
@@ -271,10 +276,7 @@ export function SubmitReviewForm ({space}:{space:submitReviewType}){
               className="outline-none  border-black border-2 rounded-md w-full p-2"
               value={submitReview.Message}
               onChange={(e) => {
-                setSubmitReview((prevReview) => ({
-                  ...prevReview,
-                  Message: e.target.value,
-                }));
+                setSubmitReview({...submitReview,Message:e.target.value})
               }}
             ></textarea>
           </div>
@@ -296,7 +298,7 @@ export function SubmitReviewForm ({space}:{space:submitReviewType}){
                 accept=".png,.jpeg,.jpg"
                 className=""
                 onChange={(e) => {
-                  console.log(e.target.files)
+                  setUploadImageBlob(URL.createObjectURL(e.target.files![0]))
                   setSubmitReview((preReview) => ({
                     ...preReview,
                     AttachImage: e.target.files![0],
@@ -304,7 +306,7 @@ export function SubmitReviewForm ({space}:{space:submitReviewType}){
                 }}
               />
               <div className={`${submitReview.AttachImage instanceof File ? 'block':"hidden"} relative w-fit`}>
-              <img src={submitReview.AttachImage instanceof File ? URL.createObjectURL(submitReview.AttachImage) : ''} className="w-16 rounded-md mt-7" />
+              <img src={submitReview.AttachImage instanceof File ? uploadImageBlob : ''} className="w-16 rounded-md mt-7" />
               <div className="absolute -top-3 -right-3">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -375,7 +377,7 @@ export function SubmitReviewForm ({space}:{space:submitReviewType}){
               <img
                 src={
                   submitReview.UploadPhoto instanceof File
-                    ? URL.createObjectURL(submitReview.UploadPhoto)
+                    ? attachImageBlob
                     : submitReview.UploadPhoto
                 }
                 className="w-16 h-16 rounded-full"
@@ -392,6 +394,7 @@ export function SubmitReviewForm ({space}:{space:submitReviewType}){
                   accept=".jpg ,.png ,jpeg"
                   size={5 * 1024 * 1024}
                   onChange={(e) => {
+                    setAttachImageBlob(URL.createObjectURL(e.target.files![0]))
                     setSubmitReview((prevReview) => ({
                       ...prevReview,
                       UploadPhoto: e.target.files![0],

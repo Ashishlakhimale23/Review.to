@@ -30,7 +30,7 @@ export function Layout():ReactElement{
             <Route element={<PrivateRoutes />}>
               <Route path="/createspace" element={<CreateSpace />} />
               <Route element={<Dashboard />} path="/dashboard"></Route>
-              <Route element={<SubmitReview/>} path={`/:spacelink`} /> 
+              <Route element={<SubmitReview/>} path={`/review/:spacelink`} /> 
             </Route>
           </Routes>
       </>
