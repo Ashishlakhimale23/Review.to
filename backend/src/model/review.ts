@@ -1,3 +1,4 @@
+import { boolean } from "joi";
 import mongoose from "mongoose";
 
 const ReviewModel  = new mongoose.Schema({
@@ -13,18 +14,22 @@ const ReviewModel  = new mongoose.Schema({
         type:String,
         required:true
     },
-    UploadedPhoto:{
+    UploadPhoto:{
         type:String,
         required:true
     },
-    AttachedPhoto:{
+    AttachImage:{
         type:String
     },
     StarRating:{
         type:[Boolean]
     },
-    SocailLinks:{
+    SocialLink:{
         type:String
+    },
+    WallOfFame:{
+        type:Boolean,
+        default:false
     }
 },{
     timestamps:true

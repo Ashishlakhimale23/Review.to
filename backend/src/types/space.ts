@@ -1,4 +1,3 @@
-import multer from "multer"
 
 export interface Space{
   spaceName : string,

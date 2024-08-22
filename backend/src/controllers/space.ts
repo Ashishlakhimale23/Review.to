@@ -7,6 +7,7 @@ import cloudinary from "../utils/Cloudinary"
 import {Readable} from "stream"
 import { CloudinaryUpload } from "../utils/CloudinaryUpload"
 import { Review } from "../model/review"
+import mongoose from "mongoose"
 export const CreateSpace =async (req:Request<{},{},{space:Space,uid:string}>,res:Response)=>{
     const {spaceName,spaceCustomMessage,spaceQuestion,spaceSocialLinks,spaceStarRating,spaceTheme,spaceTitle}  = req.body.space
     const firebaseuid = req.body.uid
@@ -65,7 +66,7 @@ export const CreateSpace =async (req:Request<{},{},{space:Space,uid:string}>,res
 export const GetAllSpaces = async (req:Request<{},{},{uid:string}>,res:Response)=>{
     const firebaseuid = req.body.uid;
     try{
-        await User.findOne({firebaseUid:firebaseuid}).populate("space",'spaceName spaceImage').then((result)=>{
+        await User.findOne({firebaseUid:firebaseuid}).populate("space",'spaceName spaceImage spaceLink').then((result)=>{
             return res.status(200).json({data:result}).end()
         }).catch((error)=>{
             return res.status(500).json({message:"couldnt find the user"})
@@ -141,9 +142,9 @@ export const submitReivew =async (req:Request,res:Response)=>{
             YourEmail:YourEmail,
             YourName:YourName,
             StarRating:StarRating,
-            SocailLinks:SocialLink,
-            AttachedPhoto:AttachLink,
-            UploadedPhoto:UploadPhotoLink
+            SocialLink:SocialLink,
+            AttachImage:AttachLink,
+            UploadPhoto:UploadPhotoLink
         })
 
         await newReview.save().then(async (resp)=>{
@@ -155,7 +156,43 @@ export const submitReivew =async (req:Request,res:Response)=>{
     }catch(error){
         return res.status(500).json({message:"internal server error"})
     }
+}
 
+export const GetAllReviews=async(req:Request<{},{},{spaceLink:string,uid:string}>,res:Response)=>{
+    console.log(req.body)
+    let spaceLink = req.body.spaceLink
+    try{
+        const result = await space.findOne({spaceLink:spaceLink}).populate("Reviews") 
+        console.log(result)
+        return res.status(200).json({result:result})
 
+    }catch(error){
+        return res.status(500).json({message:"internal server error"})
+}
+}
+
+export const AddtoWallofFame=async(req:Request<{},{},{uid:string,Reviewid:string}>,res:Response)=>{
+    const firebaseUid = req.body.uid
+    const Reviewid = req.body.Reviewid
+    console.log(req.body)
+    if(!firebaseUid || !Reviewid){
+        return res.status(500).json({message:"Error occured try again."})
+    }
+    else{
+        try{
+            const response = await Review.findById(Reviewid)
+            console.log(response)
+            if(response){
+                const walloffame = response.WallOfFame
+                response.WallOfFame= !response.WallOfFame
+                await response.save()
+                return res.status(200).json({message:"success"})
+                
+            }
+
+        }catch(error){
+            return res.status(500).json({message:"internal server error"})
+        }
+    }
 
 }

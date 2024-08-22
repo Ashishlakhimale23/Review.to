@@ -23,7 +23,7 @@ export function Dashboard():ReactElement{
       return response.data.data.space
     }
 
-    const {data:space,isLoading,isError,error} = useQuery<[{spaceName:string,spaceImage:string,_id:string}],CustomAxiosError>({
+    const {data:space,isLoading,isError,error} = useQuery<[{spaceName:string,spaceImage:string,_id:string,spaceLink:string}],CustomAxiosError>({
       queryKey :["space"],
       queryFn:fetchSpace
     })
@@ -68,7 +68,7 @@ export function Dashboard():ReactElement{
             <div className="space-y-5  md:grid md:grid-cols-2 md:space-y-0 md:gap-y-7 md:gap-x-3 lg:grid-cols-3 ">
               {!space?.length ? <div>no space</div>:
                space?.map((element)=>(
-                <SpaceDashboard image={element.spaceImage} spaceName={element.spaceName} key={element._id} id={element._id}/>
+                <SpaceDashboard image={element.spaceImage} spaceName={element.spaceName} spaceLink={element.spaceLink} key={element._id} id={element._id}/>
                )) 
               } 
             </div>

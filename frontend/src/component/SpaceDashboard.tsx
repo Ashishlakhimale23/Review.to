@@ -1,11 +1,15 @@
 import {  useSetRecoilState } from "recoil";
 import { DeleteState } from "../store/atoms";
 import {RemoveAnySpaces} from "../utils/RemoveAnySpaces"
-export function SpaceDashboard({image,spaceName,id}:{image:string,spaceName:string,id:string}){
+import { useNavigate } from "react-router-dom";
+export function SpaceDashboard({image,spaceName,id,spaceLink}:{image:string,spaceName:string,id:string,spaceLink:string}){
   const setDeleteState = useSetRecoilState(DeleteState)
+  let navigate = useNavigate()
     return (
       <>
-        <div className="w-full h-fit flex items-center border-2 space-x-2">
+        <div className="w-full h-fit flex items-center border-2 space-x-2 cursor-pointer" onClick={()=>{
+          navigate(`/products/${spaceLink}`)
+        }}>
           <div>
             <img src={image} className="w-[70px] h-[70px] md:w-20 md:h-20 "/>
           </div>

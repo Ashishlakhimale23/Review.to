@@ -31,6 +31,7 @@ export const SpaceState = atom<Space>({
   key:"Space",
   default:(()=>{
     const saved = localStorage.getItem("space");
+    console.log(saved)
     return saved ? JSON.parse(saved) as Space : defaultSpace
   })()
 })
@@ -58,5 +59,10 @@ export const SettingsModal = atom<boolean>({
 
 export const SubmitReviewModal = atom<boolean>({
   key:"SubmitReviewModal",
+  default:false
+})
+
+export const EditFormModal = atom<boolean>({
+  key:"EditFormModal",
   default:false
 })

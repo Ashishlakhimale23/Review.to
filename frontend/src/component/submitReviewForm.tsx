@@ -63,7 +63,7 @@ export function SubmitReviewForm ({space}:{space:submitReviewType}){
 
   const submitMutation = useMutation<any,CustomAxiosError,FormData>({
     mutationFn : (formdata:FormData)=>submitreviewmethod(formdata),
-    onSuccess:(data)=>{
+    onSuccess:()=>{
     setSubmitReview(submitReviewDefault)
     setSubmitReviewModal(false)
     },
@@ -252,8 +252,7 @@ export function SubmitReviewForm ({space}:{space:submitReviewType}){
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
-                  fill="currentColor"
-                  className="w-6"
+                  className="w-6 fill-yellow-400"
                 >
                   <path
                     fill-rule="evenodd"

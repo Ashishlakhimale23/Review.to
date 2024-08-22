@@ -39,5 +39,13 @@ export interface Submitform{
   UploadPhoto : File | string,
   checkbox : boolean,
   StarRating :boolean[]
+  createdAt?: Date
+  WallOfFame?:boolean
+  _id?:string
 
+}
+
+export interface GetAllReviews extends Space {
+  Reviews:Submitform[],
+  spaceLink:string
 }

@@ -10,6 +10,7 @@ import { PageNotFound } from "../pages/PageNotFound";
 import { useRecoilValue } from "recoil";
 import { PublishedState } from "../store/atoms";
 import { SubmitReview } from "../pages/SubmitReview";
+import { Reviews } from "../pages/Reviews";
 
 export function Layout():ReactElement{
   const authtoken = localStorage.getItem("AccessToken")
@@ -31,6 +32,7 @@ export function Layout():ReactElement{
               <Route path="/createspace" element={<CreateSpace />} />
               <Route element={<Dashboard />} path="/dashboard"></Route>
               <Route element={<SubmitReview/>} path={`/review/:spacelink`} /> 
+              <Route element={<Reviews/>} path={`/products/:spaceLink`}/>
             </Route>
           </Routes>
       </>
