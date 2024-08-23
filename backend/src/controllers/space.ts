@@ -1,66 +1,92 @@
 import { Request,Response } from "express" 
-import {Space, SumbitReivew} from "../types/space"
+import {Space} from "../types/space"
 import { space } from "../model/space"
 import { User } from "../model/user"
 import { RemoveAnySpaces } from "../utils/RemoveAnySpaces"
-import cloudinary from "../utils/Cloudinary"
-import {Readable} from "stream"
 import { CloudinaryUpload } from "../utils/CloudinaryUpload"
 import { Review } from "../model/review"
-import mongoose from "mongoose"
-export const CreateSpace =async (req:Request<{},{},{space:Space,uid:string}>,res:Response)=>{
-    const {spaceName,spaceCustomMessage,spaceQuestion,spaceSocialLinks,spaceStarRating,spaceTheme,spaceTitle}  = req.body.space
-    const firebaseuid = req.body.uid
-    console.log(firebaseuid) 
-    try{
+import cloudinary from "../utils/Cloudinary"
+
+export const CreateSpace =async (req:Request<{},{},{space:FormData & Space,uid:string}>,res:Response)=>{
+
+
+    const {space:FormData,uid} = req.body
+    console.log(FormData)
+    const firebaseuid = uid
+    const {spaceName,spaceCustomMessage,spaceQuestion,spaceImage:spaceimage,spaceSocialLinks,spaceStarRating,spaceTheme,spaceTitle,_id,status}  =FormData 
+    const isStatus =typeof status ==='string'? status === 'true' :status;
+    let spaceImage:string;
     let spaceLink:string ; 
     let SpaceName = spaceName.replace(/\s+/g,' ').trim();
     let name = RemoveAnySpaces(spaceName)
-    let spaceImage:string;
      
-    if(req.file){
-        try{
-        spaceImage = await CloudinaryUpload(req.file)
-        }catch(error){
-            return res.status(500).json({message:"Error while uploading"})
-        }
-    }
-
-    await space.countDocuments({spaceName:SpaceName}).then((resp)=>{
-        spaceLink = `${resp ? name+resp :name}` 
-    }).then(()=>{
+        try {
+            const resp = await space.countDocuments({ spaceName: SpaceName })
+            spaceLink = `${resp ? name+resp :name}`
+            if(req.file &&  !isStatus){
+                spaceImage = await CloudinaryUpload(req.file)
+            let NewSpace = {
+                spaceName: SpaceName,
+                spaceTitle: spaceTitle,
+                spaceImage: spaceImage,
+                spaceCustomMessage: spaceCustomMessage ,
+                spaceQuestion: spaceQuestion,
+                spaceSocialLinks:spaceSocialLinks ,
+                spaceStarRating: spaceStarRating,
+                spaceTheme: spaceTheme,
+                spaceLink: spaceLink
+            }
             
-    const NewSpace  = new space({
-        spaceName:SpaceName,
-        spaceTitle:spaceTitle,
-        spaceImage:spaceImage,
-        spaceCustomMessage:spaceCustomMessage,
-        spaceQuestion:spaceQuestion,
-        spaceSocialLinks:spaceSocialLinks,
-        spaceStarRating:spaceStarRating,
-        spaceTheme:spaceTheme,
-        spaceLink:spaceLink
-    })
-    NewSpace.save().then(async (resp)=>{
+                const response = await space.findByIdAndUpdate( _id,NewSpace , {
+                    upsert: true, setDefaultsOnInsert: true ,new:true
+                })
+                console.log(response)
+                return res.status(200).json({ spaceLinks: spaceLink, spaceName: spaceName })
+            }
+            if(!req.file && !isStatus){
+                console.log('hello')
+            let NewSpace = {
+                spaceName: SpaceName,
+                spaceTitle: spaceTitle,
+                spaceImage: spaceimage,
+                spaceCustomMessage: spaceCustomMessage ,
+                spaceQuestion: spaceQuestion,
+                spaceSocialLinks:spaceSocialLinks ,
+                spaceStarRating: spaceStarRating,
+                spaceTheme: spaceTheme,
+                spaceLink: spaceLink
+            }
+            
+                const response = await space.findByIdAndUpdate({_id:_id},NewSpace,{
+                    upsert: true, setDefaultsOnInsert: true,new:true
+                })
+                console.log(response)
+                return res.status(200).json({ spaceName: spaceName , spaceLinks: spaceLink})
+            } if(req.file && isStatus) {
+                spaceImage = await CloudinaryUpload(req.file)
+                const NewSpace = new space({
+                    spaceName: SpaceName,
+                    spaceTitle: spaceTitle,
+                    spaceImage: spaceImage,
+                    spaceCustomMessage: spaceCustomMessage,
+                    spaceQuestion: spaceQuestion,
+                    spaceSocialLinks: spaceSocialLinks,
+                    spaceStarRating: spaceStarRating,
+                    spaceTheme: spaceTheme,
+                    spaceLink: spaceLink
+                })
+                const result = await NewSpace.save()
+                console.log(result) 
+                await User.findOneAndUpdate({ firebaseUid: firebaseuid }, { $push: { space: result._id } })
+                return res.status(201).json({ spaceName: spaceName, spaceLinks: spaceLink })
+            }
+            
         
-         await User.findOneAndUpdate({firebaseUid:firebaseuid},{$push:{space:resp._id}}).then((resp)=>{
-            console.log(resp)
-            return res.status(201).json({spaceName:spaceName,spaceLinks:spaceLink})
-        }).catch((error)=>{
-            return res.status(500).json({message:"failed to upadate the users space array"})
-        })
-    }).catch((error)=>{
-        console.log(error)
-        return res.status(500).json({message:"failed to create a space"})
-    })
-    }).catch(()=>{
-        return res.status(500).json({message:"failed to create a space"})
-    })
-     
-    }catch(error){
-        return res.status(500).json({message:'internal server issue'})
-    }
-    
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json({ message: 'internal server issue' })
+        }
+ 
 }
 
 export const GetAllSpaces = async (req:Request<{},{},{uid:string}>,res:Response)=>{

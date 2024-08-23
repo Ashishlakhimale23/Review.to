@@ -48,9 +48,7 @@ export function ReviewCard({Review}:{Review:Submitform}){
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                className={`${WallOfFame ? 'fill-red-600' :"fill-slate-100"} w-6`}
+                className={`${WallOfFame ? 'fill-red-600 stroke-red-600' :"fill-slate-100"} w-6`}
                 onClick={()=>{
                   if(!_id){
                     return toast.error("Error occured")
@@ -79,7 +77,7 @@ export function ReviewCard({Review}:{Review:Submitform}){
                         viewBox="0 0 24 24"
                         stroke-width="1.5"
                         stroke="currentColor"
-                        className="w-6 "
+                        className="w-6"
                       >
                         <path
                           stroke-linecap="round"

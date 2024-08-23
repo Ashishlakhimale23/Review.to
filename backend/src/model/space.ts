@@ -23,15 +23,15 @@ const Space = new mongoose.Schema({
         required:true
     },
     spaceSocialLinks:{
-        type:String,
+        type:Boolean,
         required:true
     },
     spaceTheme:{
-        type:String,
+        type:Boolean,
         required:true
     },
     spaceStarRating:{
-        type:String,
+        type:Boolean,
         required:true
     },
     spaceLink:{

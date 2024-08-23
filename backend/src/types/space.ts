@@ -8,6 +8,8 @@ export interface Space{
   spaceSocialLinks :boolean,
   spaceStarRating : boolean ,
   spaceTheme :boolean 
+  _id?:string
+  status:boolean
 }
 
 export interface SumbitReivew{

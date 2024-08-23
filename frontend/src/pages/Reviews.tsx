@@ -7,26 +7,64 @@ import { ReviewHeader } from "../component/ReviewHeader";
 import { PreviewCard } from "../component/PreviewCard";
 import {toast} from "react-toastify"
 import { CreateSpaceInfo } from "../component/CreateSpaceInfo";
-import { useRecoilValue } from "recoil";
-import { EditFormModal, SpaceState } from "../store/atoms";
+import {  useRecoilState} from "recoil";
+import { defaultSpace, EditFormModal, SpaceState } from "../store/atoms";
+import { useEffect} from "react";
 
 export function Reviews(){
     const {spaceLink} = useParams()
-    const space = useRecoilValue(SpaceState)
-    const editModal = useRecoilValue(EditFormModal)
-    let persistentspace :Space
+    const [space,setSpace] = useRecoilState(SpaceState)
+    const [editModal,setEditModal]= useRecoilState(EditFormModal)
+    
 
-    const GetReviews= async():Promise<GetAllReviews>=>{
-        const response =await api.post(`/space/getallreviews`,{spaceLink:spaceLink})
-        return  response.data.result
+     useEffect(() => {
+    const storedSpace = localStorage.getItem("space");
+    if (storedSpace) {
+      setSpace(JSON.parse(storedSpace));
+    } else {
+      setSpace(defaultSpace);
     }
 
-    const {data,isLoading,isError,error,isSuccess} = useQuery<GetAllReviews,CustomAxiosError>({
-        queryKey:["review"],
-        queryFn:GetReviews
-        
-    })
-    console.log(data)
+    return () => {
+      setSpace(defaultSpace);
+      setEditModal(false);
+    };
+  }, []);
+
+  const GetReviews = async (): Promise<GetAllReviews> => {
+    const response = await api.post(`/space/getallreviews`, { spaceLink: spaceLink });
+    return response.data.result;
+  }
+
+  const { data, isLoading, isError, error, isSuccess } = useQuery<GetAllReviews, CustomAxiosError>({
+    queryKey: ["review",spaceLink],
+    queryFn: GetReviews,
+    
+  });
+ 
+  console.log(data)
+
+ useEffect(() => {
+    if (isSuccess && data) {
+      const newSpace: Space = {
+        spaceName: data.spaceName,
+        spaceImage: data.spaceImage,
+        spaceQuestion: data.spaceQuestion,
+        spaceCustomMessage: data.spaceCustomMessage,
+        spaceSocialLinks: data.spaceSocialLinks,
+        spaceStarRating: data.spaceStarRating,
+        spaceTheme: data.spaceTheme,
+        spaceTitle: data.spaceTitle,
+        _id: data._id
+      };
+      setSpace(newSpace);
+      localStorage.setItem("space", JSON.stringify(newSpace));
+    }
+  }, [isSuccess, data, setSpace]); 
+
+  if (isLoading) {
+    return <div>Loading..</div>;
+  }
     if(isLoading){
         return <div>Loading..</div>
     }
@@ -41,21 +79,7 @@ export function Reviews(){
             return toast.error("Error setting up request. Please try again.");
           } 
     }
-    if(isSuccess){
-       persistentspace ={
-        spaceName:data.spaceName,
-        spaceImage:data.spaceImage,
-        spaceQuestion:data.spaceQuestion,
-        spaceCustomMessage:data.spaceCustomMessage,
-        spaceSocialLinks:data.spaceSocialLinks,
-        spaceStarRating:data.spaceStarRating,
-        spaceTheme:data.spaceTheme,
-        spaceTitle:data.spaceTitle
-      }
-      console.log(persistentspace)
-      console.log(space)
-      localStorage.setItem('space',JSON.stringify(persistentspace))
-    }
+   
 
     if (editModal) {
       return (

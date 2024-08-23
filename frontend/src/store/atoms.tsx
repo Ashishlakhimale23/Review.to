@@ -13,7 +13,8 @@ export const defaultSpace:Space = {
     ],
   spaceSocialLinks:false,
   spaceStarRating:false,
-  spaceTheme:false
+  spaceTheme:false,
+  _id:""
 }
 
 export const defaultPublished:PublishedSpace = {
@@ -31,7 +32,6 @@ export const SpaceState = atom<Space>({
   key:"Space",
   default:(()=>{
     const saved = localStorage.getItem("space");
-    console.log(saved)
     return saved ? JSON.parse(saved) as Space : defaultSpace
   })()
 })
@@ -65,4 +65,9 @@ export const SubmitReviewModal = atom<boolean>({
 export const EditFormModal = atom<boolean>({
   key:"EditFormModal",
   default:false
+})
+
+export const SpaceLogo = atom<string>({
+  key:'SpaceLogo',
+  default:''
 })
