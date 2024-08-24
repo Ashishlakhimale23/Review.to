@@ -21,6 +21,7 @@ export function CreateSpaceInfo():ReactElement{
     useEffect(()=>{
       localStorage.setItem("space",JSON.stringify(space))
       return ()=>{
+        
         localStorage.removeItem("space");
       }
     },[space])
@@ -143,7 +144,7 @@ export function CreateSpaceInfo():ReactElement{
               type="text"
               value={spaceName}
               onChange={(e) => setSpace((prevSpace)=>({...prevSpace,spaceName:e.target.value}))}
-              className="w-full outline-none border-2 border-gray-200 focus:ring-black focus:ring-2 px-3 py-1 rounded-md"
+              className="w-full outline-none border-2 border-gray-200 focus:ring-black focus:ring-2 px-3 py-1 rounded-md "
             />
           </div>
 

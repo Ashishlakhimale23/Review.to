@@ -10,6 +10,7 @@ import { CreateSpaceInfo } from "../component/CreateSpaceInfo";
 import {  useRecoilState} from "recoil";
 import { defaultSpace, EditFormModal, SpaceState } from "../store/atoms";
 import { useEffect} from "react";
+import loading from "../assets/loading.gif"
 
 export function Reviews(){
     const {spaceLink} = useParams()
@@ -42,7 +43,6 @@ export function Reviews(){
     
   });
  
-  console.log(data)
 
  useEffect(() => {
     if (isSuccess && data) {
@@ -63,21 +63,22 @@ export function Reviews(){
   }, [isSuccess, data, setSpace]); 
 
   if (isLoading) {
-    return <div>Loading..</div>;
+    return (
+      <div className=" h-svh w-full flex justify-center items-center p-5 bg-black">
+        <img src={loading} alt="Loading" className="max-w-60" />
+      </div>
+    );
   }
-    if(isLoading){
-        return <div>Loading..</div>
-    }
-    if(isError){
+    if (isError) {
       if (error.response) {
-             return toast.error(
-              error.response.data?.message || "Error creating space"
-            );
-          } else if (error.request) {
-            return toast.error("No response from server. Please try again.");
-          } else {
-            return toast.error("Error setting up request. Please try again.");
-          } 
+        return toast.error(
+          error.response.data?.message || "Error creating space"
+        );
+      } else if (error.request) {
+        return toast.error("No response from server. Please try again.");
+      } else {
+        return toast.error("Error setting up request. Please try again.");
+      }
     }
    
 

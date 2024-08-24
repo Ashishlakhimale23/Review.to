@@ -14,12 +14,12 @@ export function PreviewCard({space}:{space:Space}){
                 <img src={typeof spaceImage === 'string' ? spaceImage : spaceImage instanceof File  ? spaceLogo : defaultSpace.spaceImage as string}  alt="" className="w-14 h-14 rounded-full " />
             </div>
 
-            <div className="mb-3">
-                <p className="text-xl text-center">{spaceTitle.length?spaceTitle:"Header goes here..."}</p>
+            <div className="mb-3 ">
+                <p className="text-xl text-center break-words ">{spaceTitle.length?spaceTitle:"Header goes here..."}</p>
             </div>
 
-            <div className="mb-3">
-                <p className=" text-center">{spaceCustomMessage.length?spaceCustomMessage:"your custom message goes here..."}</p>
+            <div className="mb-3 ">
+                <p className=" text-center break-words">{spaceCustomMessage.length?spaceCustomMessage:"your custom message goes here..."}</p>
             </div>
 
             <div className="mb-3">
@@ -27,8 +27,10 @@ export function PreviewCard({space}:{space:Space}){
                 <div className="space-y-1">
                     {
                        spaceQuestion.map((question,index) => (
-                       <div key={index} className="flex"> 
-                        <p key={index}>{question}</p>
+                       <div key={index} className="flex space-x-1"> 
+                       
+                  <p className="text-sm">{"."}</p>
+                        <p key={index} className="break-words">{question}</p>
                        </div>
                        ))
                     }

@@ -11,7 +11,7 @@ import { DeleteSpace } from "../component/DeleteSpace";
 import { DeleteState } from "../store/atoms";
 import "react-toastify/dist/ReactToastify.css";
 import { CustomAxiosError } from "../types/types";
-
+import loading from "../assets/loading.gif"
 export function Dashboard():ReactElement{
     const navigate = useNavigate()
     const {Published,PublishedName,PublishedLink} = useRecoilValue<PublishedSpace>(PublishedState)
@@ -28,15 +28,13 @@ export function Dashboard():ReactElement{
       queryFn:fetchSpace
     })
     
-
-
-    if(isLoading){
-      return(
-            <>
-            <div className="w-full h-screen bg-black flex justify-center items-center overflow-hidden"><p className="text-2xl text-white font-space">Loading...</p></div>
-            </> 
-      )    
-    }
+if (isLoading) {
+    return (
+      <div className=" h-svh w-full flex justify-center items-center p-5 bg-black">
+        <img src={loading} alt="" />
+      </div>
+    );
+  }
     if(Published){
       return (
         <>

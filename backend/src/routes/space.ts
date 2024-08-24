@@ -1,6 +1,6 @@
 import express from "express"
 import { AuthMidddleware } from "../middlerware/Auth"
-import { CreateSpace, DeleteSpace, GetAllReviews, GetAllSpaces, getSpaceDetails, submitReivew,AddtoWallofFame } from "../controllers/space"
+import { CreateSpace, DeleteSpace, GetAllReviews, GetAllSpaces, getSpaceDetails, submitReivew,AddtoWallofFame, DeleteReview } from "../controllers/space"
 import { upload } from "../utils/Cloudinary"
 export const spaceRouter = express.Router()
 const uploadFields = upload.fields([
@@ -15,3 +15,4 @@ spaceRouter.post("/getspacedetails",getSpaceDetails)
 spaceRouter.post("/submitreview",uploadFields,submitReivew)
 spaceRouter.post('/getallreviews',AuthMidddleware,GetAllReviews)
 spaceRouter.post('/editwalloflove',AuthMidddleware,AddtoWallofFame)
+spaceRouter.post("/deletereview",AuthMidddleware,DeleteReview)

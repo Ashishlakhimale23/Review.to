@@ -4,22 +4,52 @@ import { CustomAxiosError, Submitform } from "../types/types";
 import {toast} from "react-toastify"
 import {getdate} from "../utils/GetDate"
 import { api } from "../utils/AxiosApi";
+import { useParams } from "react-router-dom";
 export function ReviewCard({Review}:{Review:Submitform}){
     const {Message,AttachImage,YourName,YourEmail,UploadPhoto,StarRating,SocialLink,createdAt,WallOfFame,_id} = Review
     const queryClient = useQueryClient()
+    const {spaceLink} = useParams()
     
-    const addWallofFame =async (Reviewid:string):Promise<Object>=>{
+    const addWallofFame =async (Reviewid:string):Promise<{message:string}>=>{
       const response = await api.post(`${process.env.BASE_URL}/space/editwalloflove`,{Reviewid:Reviewid})
       return response.data
-
     }
+
+    const deleteReview = async(Reviewid:string,SpaceLink : string):Promise<{message:string}>=>{
+      const response = await api.post(`${process.env.BASE_URL}/space/deletereview`,{Reviewid:Reviewid,SpaceLink:SpaceLink})
+      return response.data
+    } 
     
-    const WallOfFameMutation = useMutation<Object,CustomAxiosError,string>({
+    const DeleteReviewMutation = useMutation<{message:string},CustomAxiosError,{Reviewid:string,SpaceLink:string}>({
+      mutationFn:({Reviewid,SpaceLink}:{Reviewid:string,SpaceLink:string})=>deleteReview(Reviewid,SpaceLink),
+      onSuccess:(data)=>{
+        if(data.message === 'deleted'){
+          toast.success("Deleted review");
+          queryClient.invalidateQueries({ queryKey: ["review"] });
+        }
+      },
+      onError:(error)=>{
+          if (error.response) {
+            return toast.error(
+              error.response.data?.message || "Error creating space"
+            );
+          } else if (error.request) {
+            return toast.error("No response from server. Please try again.");
+          } else {
+            return toast.error("Error setting up request. Please try again.");
+          }
+      }
+    })
+
+    const WallOfFameMutation = useMutation<{message:string},CustomAxiosError,string>({
       mutationFn:(Reviewid:string)=>addWallofFame(Reviewid),
-      onSuccess:()=>{
-        toast.dismiss("loading")
-        !WallOfFame ? toast.success("Added to wall of fame") :toast.success("Removed from wall of fame")
-        queryClient.invalidateQueries({queryKey:["review"]})
+      onSuccess:(data)=>{  
+        if(data.message === 'success'){
+          !WallOfFame
+            ? toast.success("Added to wall of fame")
+            : toast.success("Removed from wall of fame");
+          queryClient.invalidateQueries({ queryKey: ["review"] });
+        }
       },
       onError:(error)=>{
           if (error.response) {
@@ -34,9 +64,7 @@ export function ReviewCard({Review}:{Review:Submitform}){
       }
 
     })
-    if(WallOfFameMutation.isPending){
-      toast.loading("please wait",{toastId:"loading"})
-    }
+    
 
     
     return (
@@ -44,22 +72,47 @@ export function ReviewCard({Review}:{Review:Submitform}){
         <div className="h-fit w-full font-space text-white p-2 bg-silver rounded-lg space-y-2 ">
           <div className="w-full flex justify-between">
             <p>Text</p>
-            <div>
+            <div className="flex space-x-2">
+              
+
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
-                className={`${WallOfFame ? 'fill-red-600 stroke-red-600' :"fill-slate-100"} w-6`}
-                onClick={()=>{
-                  if(!_id){
-                    return toast.error("Error occured")
+                className={`${
+                  WallOfFame ? "fill-red-600 stroke-red-600" : "fill-slate-100"
+                } w-6`}
+                onClick={() => {
+                  if (!_id) {
+                    return toast.error("Error occured");
                   }
-                  WallOfFameMutation.mutate(_id) 
+                  WallOfFameMutation.mutate(_id);
                 }}
               >
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
+                />
+              </svg>
+
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                className="w-5"
+                onClick={()=>{
+                  if(!_id || !spaceLink){
+                    return toast.error("error occured")
+                  }
+                  DeleteReviewMutation.mutate({Reviewid:_id,SpaceLink:spaceLink})
+                }}
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
                 />
               </svg>
             </div>

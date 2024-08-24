@@ -44,7 +44,7 @@ export const CreateSpace =async (req:Request<{},{},{space:FormData & Space,uid:s
                 return res.status(200).json({ spaceLinks: spaceLink, spaceName: spaceName })
             }
             if(!req.file && !isStatus){
-                console.log('hello')
+               
             let NewSpace = {
                 spaceName: SpaceName,
                 spaceTitle: spaceTitle,
@@ -60,7 +60,7 @@ export const CreateSpace =async (req:Request<{},{},{space:FormData & Space,uid:s
                 const response = await space.findByIdAndUpdate({_id:_id},NewSpace,{
                     upsert: true, setDefaultsOnInsert: true,new:true
                 })
-                console.log(response)
+               
                 return res.status(200).json({ spaceName: spaceName , spaceLinks: spaceLink})
             } if(req.file && isStatus) {
                 spaceImage = await CloudinaryUpload(req.file)
@@ -201,7 +201,7 @@ export const AddtoWallofFame=async(req:Request<{},{},{uid:string,Reviewid:string
     const firebaseUid = req.body.uid
     const Reviewid = req.body.Reviewid
     console.log(req.body)
-    if(!firebaseUid || !Reviewid){
+    if(!firebaseUid || !Reviewid ){
         return res.status(500).json({message:"Error occured try again."})
     }
     else{
@@ -220,5 +220,26 @@ export const AddtoWallofFame=async(req:Request<{},{},{uid:string,Reviewid:string
             return res.status(500).json({message:"internal server error"})
         }
     }
+
+}
+
+export const DeleteReview=async(req:Request<{},{},{uid:string,Reviewid:string,SpaceLink:string}>,res:Response)=>{
+    const firebaseuid : string = req.body.uid 
+    const id: string = req.body.Reviewid
+    const SpaceLink:string = req.body.SpaceLink
+    if(!firebaseuid || !id|| !SpaceLink){
+        return res.status(500).json({message:"Fields not provided"})
+    }
+    try{
+        const response = await Review.findByIdAndDelete(id)
+        console.log(response)
+        await space.findByIdAndUpdate(id,{$pull:{'Reviews':id}})
+        return res.json({message:"deleted"})
+    }catch(error){
+        console.log(error)
+        return res.status(500).json({message:"internal server error"})
+
+    }
+
 
 }
