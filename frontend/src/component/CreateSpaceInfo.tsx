@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useRef, useState} from "react"
+import { ReactElement, useEffect, useRef} from "react"
 import {toast} from "react-toastify"
 import { useRecoilState, useSetRecoilState } from "recoil"
 import {PublishedState, SpaceLogo, SpaceState} from "../store/atoms"
@@ -13,8 +13,7 @@ export function CreateSpaceInfo():ReactElement{
     const [space, setSpace] = useRecoilState(SpaceState);
     const setPublished = useSetRecoilState<PublishedSpace>(PublishedState);
     const navigate = useNavigate()
-    const {spaceName,spaceImage,spaceCustomMessage,spaceSocialLinks,spaceQuestion,spaceStarRating,spaceTheme,spaceTitle,_id} = space
-    console.log(spaceSocialLinks)
+    const {spaceName,spaceImage,spaceCustomMessage,spaceSocialLinks,spaceQuestion,spaceStarRating,spaceTheme,spaceTitle} = space
     const [spaceLogo,setSpaceLogo]  = useRecoilState(SpaceLogo)    
     const ButtonRef = useRef<HTMLButtonElement>(null); 
 

@@ -1,10 +1,11 @@
 import { ReactElement } from "react";
 import gojo from "../assets/gojo.gif"
-import { useRecoilState, useRecoilValue } from "recoil";
+import {  useSetRecoilState } from "recoil";
 import { PublishedState } from "../store/atoms";
 import {defaultPublished} from "../store/atoms"
+import { toast } from "react-toastify";
 export function PublishedCard ({spaceName,spaceLink}:{spaceName:string,spaceLink:string}):ReactElement{
-    const [published,setPublished] =useRecoilState(PublishedState) 
+    const setPublished =useSetRecoilState(PublishedState) 
     return (
       <>
         <div className="w-full h-screen flex justify-center items-center px-3">
@@ -16,7 +17,8 @@ export function PublishedCard ({spaceName,spaceLink}:{spaceName:string,spaceLink
               <p className="text-center">Heres a link for your customers</p>
               <p className="text-center text-sm hover:text-blue-600 hover:cursor-pointer"  onClick={async (e)=>{
                 await navigator.clipboard.writeText(e.currentTarget.innerText)
-              }}>{spaceLink}</p>
+                return toast.success("Link copied")
+              }}>{`http://localhost:5173/review/${spaceLink}`}</p>
                 </div>
               <button className="w-full text-white bg-black rounded-md py-2" onClick={()=>{
                 setPublished(defaultPublished)

@@ -9,16 +9,19 @@ import {toast} from "react-toastify"
 import { CreateSpaceInfo } from "../component/CreateSpaceInfo";
 import {  useRecoilState} from "recoil";
 import { defaultSpace, EditFormModal, SpaceState } from "../store/atoms";
-import { useEffect} from "react";
+import { useEffect, useState} from "react";
 import loading from "../assets/loading.gif"
+import { ReviewText } from "../component/ReviewText";
+import { ReviewTwitter } from "../component/ReviewTwitter";
 
 export function Reviews(){
     const {spaceLink} = useParams()
     const [space,setSpace] = useRecoilState(SpaceState)
     const [editModal,setEditModal]= useRecoilState(EditFormModal)
+    const [onComponent,setOnComponent] = useState('text review')
     
 
-     useEffect(() => {
+    useEffect(() => {
     const storedSpace = localStorage.getItem("space");
     if (storedSpace) {
       setSpace(JSON.parse(storedSpace));
@@ -94,26 +97,56 @@ export function Reviews(){
     }
     return (
       <>
-        <div className="w-full min-h-screen bg-black">
-          <div className="md:flex md:justify-center md:items-center">
-            <ReviewHeader
-              spaceImage={data?.spaceImage as string}
-              spaceLink={data?.spaceLink as string}
-              spaceName={data?.spaceName!}
-            />
-          </div>
-          <div className="p-3 sm:flex sm:justify-center ">
-            {!data?.Reviews.length ? (
-              <div>No reviews</div>
-            ) : (
-              <div className="space-y-4 sm:px-5 sm:max-w-xl md:max-w-2xl ">
-                {data?.Reviews.map((reviews, index) => (
-                  <ReviewCard Review={reviews} key={index} />
-                ))}
-              </div>
-            )}
-          </div>
+  <div className="w-full min-h-screen bg-black">
+    <div className="md:flex md:justify-center md:items-center">
+      <ReviewHeader
+        spaceImage={data?.spaceImage as string}
+        spaceLink={data?.spaceLink as string}
+        spaceName={data?.spaceName!}
+      />
+    </div>
+    <div className="w-full min-h-screen p-3 font-space">
+      <div className="w-full h-fit">
+        <div className={`text-white space-y-1 text-lg bg-silver rounded-md p-2 max-w-xl mx-auto 
+                        middle:max-w-fit middle:space-y-0 middle:space-x-2 middle:flex middle:justify-center `}>
+          <button className={`block w-full middle:w-auto p-2 text-left hover:bg-white hover:text-black rounded-md ${onComponent == 'text review' ? 'bg-white text-black' : ""}`}
+          onClick={()=>{
+            setOnComponent("text review")
+          }}
+          >
+            Text Review
+          </button>
+          <button className={`block w-full middle:w-auto p-2 text-left hover:bg-white hover:text-black rounded-md ${onComponent == 'love' ? 'bg-white text-black' : ""}`}
+          onClick={()=>{
+            setOnComponent("love")
+          }}
+          >
+            Wall of Love
+          </button>
+
+          <button className={`block w-full middle:w-auto p-2 text-left hover:bg-white hover:text-black rounded-md ${onComponent == 'single' ? 'bg-white text-black' : ""}`}
+          onClick={()=>{
+            setOnComponent("single")
+          }}
+          >
+            Single review
+          </button>
+
+          <button className={`block w-full middle:w-auto p-2 text-left hover:bg-white hover:text-black rounded-md ${onComponent == 'widget' ? 'bg-white text-black' : ""}`}
+          onClick={()=>{
+            setOnComponent("widget")
+          }}
+          >
+            Widget
+          </button>
         </div>
-      </>
+      </div>
+      <div className="flex-1 mt-2">
+        {onComponent =='text review' && <ReviewText data={data!}/>}
+        {onComponent =='twitter' && <ReviewTwitter/>}
+      </div>
+    </div>
+  </div>
+</>
     );
 }

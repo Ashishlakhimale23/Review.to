@@ -5,6 +5,7 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
+    
     extend: {
       fontFamily:{
         space:[" 'Space Mono' ", "monospace"]
@@ -14,7 +15,11 @@ export default {
       },
       borderColor:{
          silver:"#323436"
-      }
+      },
+     screens:{
+      'middle':"870px"
+
+    },
     },
   },
   plugins: [],
