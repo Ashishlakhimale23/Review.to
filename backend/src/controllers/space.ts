@@ -263,6 +263,35 @@ export const GetSingleReview=async(req:Request<{},{},{spacelink:string,id:string
 
 }
 
+export const GetMultipleReview = async (req: Request<{}, {}, { spacelink: string }>, res: Response) => {
+    const { spacelink } = req.body;
+    console.log(spacelink);
+
+    if (!spacelink) {
+        return res.status(400).json({ message: "Incorrect params" });
+    }
+
+    try {
+        const result = await space.findOne({ spaceLink: spacelink })
+            .populate({
+                path: 'Reviews',
+                match: { WallOfFame: true },
+                select: 'Message UploadPhoto AttachImage YourName createdAt StarRating',
+                options: { sort: { createdAt: -1 } } // Sort reviews by newest first
+            })
+            .lean(); // Use lean() for better performance if you don't need Mongoose document methods
+
+        if (!result) {
+            return res.status(404).json({ message: "Space not found" });
+        }
+
+        console.log(result);
+        return res.status(200).json({result: result.Reviews });
+    } catch (error) {
+        console.error('Error in GetMultipleReview:', error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};
 export const iframescript=async(req:Request,res:Response)=>{
     await res.setHeader('Content-Type', 'application/javascript');
     return res.send(iframeResizerScript);

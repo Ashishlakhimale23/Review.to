@@ -59,6 +59,16 @@ export interface SingleTestiomial{
   YourName:string,
   UploadPhoto :string,
   StarRating :boolean[]
-  openstatus:boolean
+  openstatus:boolean,
+}
 
+export interface MultipleTestiomial{
+  _id:string,
+  spacelink:string,
+  Message:string,
+  AttachImage: string,
+  YourName:string,
+  UploadPhoto :string,
+  StarRating :boolean[]
+  createdAt:Date
 }

@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
 import { useParams } from "react-router-dom"
 import { CustomAxiosError, Submitform } from "../types/types"
-import { toast } from "react-toastify"
 import { SingleReviewCard } from "../component/SingleReviewCard"
 import { useEffect,useRef } from "react"
 export function SingleReview(){
@@ -43,7 +42,7 @@ export function SingleReview(){
         console.log(response)
         return response.data.result
     }
-    const {data,isLoading,isError} = useQuery<Submitform,CustomAxiosError>({
+    const {data,isError} = useQuery<Submitform,CustomAxiosError>({
     queryKey:['singlereveiw'],
     queryFn:getdata
     })
