@@ -15,7 +15,7 @@ export function Header():ReactElement{
     }else{
       document.body.removeEventListener('mousedown',settingmodal)
     }
-  },[settingsModal])
+  },[setSettingModal])
 
   function settingmodal(e:any){
     if(imgRef.current !== null && modalRef.current!==null){

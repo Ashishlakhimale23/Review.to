@@ -1,5 +1,5 @@
 import { atom} from "recoil";
-import { Space,PublishedSpace,DeleteSpace} from "../types/types";
+import { Space,PublishedSpace,DeleteSpaceType, SingleTestiomial} from "../types/types";
 
 export const defaultSpace:Space = {
   spaceName :'',
@@ -23,11 +23,23 @@ export const defaultPublished:PublishedSpace = {
   Published:false
 }
 
-export const defaultDeleteState:DeleteSpace={
+export const defaultDeleteState:DeleteSpaceType={
   DeleteStatus:false,
   DeleteValue:"",
   DeleteId:'',
 }
+
+export const defaultSingleReview:SingleTestiomial={
+  _id:'',
+  spacelink:"",
+  Message:'',
+  StarRating:[true,true,true,true,true],
+  YourName:'',
+  UploadPhoto:'',
+  AttachImage:'',
+  openstatus:false,
+}
+
 export const SpaceState = atom<Space>({ 
   key:"Space",
   default:(()=>{
@@ -46,7 +58,7 @@ export const PublishedState = atom<PublishedSpace>({
   default:defaultPublished
 })
 
-export const DeleteState = atom<DeleteSpace>({
+export const DeleteState = atom<DeleteSpaceType>({
   key:"DeleteState",
   default:defaultDeleteState
 })
@@ -70,4 +82,9 @@ export const EditFormModal = atom<boolean>({
 export const SpaceLogo = atom<string>({
   key:'SpaceLogo',
   default:''
+})
+
+export const SingleReview =atom<SingleTestiomial>({
+  key:"SingleReview",
+  default:defaultSingleReview
 })

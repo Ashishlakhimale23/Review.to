@@ -9,15 +9,16 @@ import { useRecoilValue } from "recoil"
 import { SubmitReviewModal } from "../store/atoms"
 
 export function SubmitReview(){
-    let navigate =useNavigate()
-    let {spacelink} = useParams()
+    const navigate =useNavigate()
+    const {spacelink} = useParams()
     const reviewModal = useRecoilValue<boolean>(SubmitReviewModal)
     
+
     const fetchSpaceInfo = async():Promise<Space>=>{
         const response = await axios.post(`${process.env.BASE_URL}/space/getspacedetails`,{spacelink:encodeURIComponent(spacelink!)})
         return response.data.details
     }
-    let {data:space,isLoading,isError,error} = useQuery<Space,CustomAxiosError>({
+    const {data:space,isLoading,isError,error} = useQuery<Space,CustomAxiosError>({
         queryKey:['generatedinfo'],
         queryFn:fetchSpaceInfo,
         retry:1

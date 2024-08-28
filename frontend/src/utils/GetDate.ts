@@ -6,10 +6,10 @@ const Month = [
     "Nov", "Dec"
 ]
 export function getdate(value:Date){
-    let date = new Date(value);
-    let day = date.getDate() ;
-    let month = Month[date.getMonth()];
-    let year = date.getFullYear();
-    let fulldate = day +" " + month + " " + year ;
+    const date = new Date(value);
+    const day = date.getDate() ;
+    const month = Month[date.getMonth()];
+    const year = date.getFullYear();
+    const fulldate = day +" " + month + " " + year ;
     return fulldate; 
 }

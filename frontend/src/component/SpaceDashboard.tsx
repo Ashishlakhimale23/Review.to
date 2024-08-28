@@ -4,7 +4,7 @@ import {RemoveAnySpaces} from "../utils/RemoveAnySpaces"
 import { useNavigate } from "react-router-dom";
 export function SpaceDashboard({image,spaceName,id,spaceLink}:{image:string,spaceName:string,id:string,spaceLink:string}){
   const setDeleteState = useSetRecoilState(DeleteState)
-  let navigate = useNavigate()
+  const navigate = useNavigate()
     return (
       <>
         <div className="w-full h-fit flex items-center border-2 space-x-2 cursor-pointer" onClick={()=>{

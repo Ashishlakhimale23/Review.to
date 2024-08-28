@@ -20,8 +20,8 @@ export function CreateSpaceInfo():ReactElement{
     useEffect(()=>{
       localStorage.setItem("space",JSON.stringify(space))
       return ()=>{
-        
         localStorage.removeItem("space");
+        
       }
     },[space])
 
@@ -76,7 +76,7 @@ export function CreateSpaceInfo():ReactElement{
    })
   const handleDataSubmit = async()=>{
 
-    let status:boolean = window.location.pathname === '/createspace' 
+    const status:boolean = window.location.pathname === '/createspace' 
     if (!spaceName.length) {
       return toast.error("Fill the field space name");
     }

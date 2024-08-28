@@ -5,8 +5,12 @@ import {toast} from "react-toastify"
 import {getdate} from "../utils/GetDate"
 import { api } from "../utils/AxiosApi";
 import { useParams } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
+import { SingleReview } from "../store/atoms";
+
 export function ReviewCard({Review}:{Review:Submitform}){
     const {Message,AttachImage,YourName,YourEmail,UploadPhoto,StarRating,SocialLink,createdAt,WallOfFame,_id} = Review
+    const setSinglereveiw = useSetRecoilState(SingleReview)
     const queryClient = useQueryClient()
     const {spaceLink} = useParams()
     
@@ -73,7 +77,36 @@ export function ReviewCard({Review}:{Review:Submitform}){
           <div className="w-full flex justify-between">
             <p>Text</p>
             <div className="flex space-x-2">
-              
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                className="w-5"
+                onClick={()=>{
+                  if(typeof _id =="undefined"){
+                    return toast.error("_id not provided")
+                  }
+                  setSinglereveiw(
+                    {_id:_id,
+                    YourName:YourName,
+                    Message:Message,
+                    spacelink:spaceLink!,
+                    AttachImage:AttachImage as string,
+                    UploadPhoto:UploadPhoto as string,
+                    StarRating:StarRating,
+                    openstatus:true
+                  })
+
+                }}
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5"
+                />
+              </svg>
 
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -102,11 +135,14 @@ export function ReviewCard({Review}:{Review:Submitform}){
                 stroke-width="1.5"
                 stroke="currentColor"
                 className="w-5"
-                onClick={()=>{
-                  if(!_id || !spaceLink){
-                    return toast.error("error occured")
+                onClick={() => {
+                  if (!_id || !spaceLink) {
+                    return toast.error("error occured");
                   }
-                  DeleteReviewMutation.mutate({Reviewid:_id,SpaceLink:spaceLink})
+                  DeleteReviewMutation.mutate({
+                    Reviewid: _id,
+                    SpaceLink: spaceLink,
+                  });
                 }}
               >
                 <path
@@ -195,6 +231,7 @@ export function ReviewCard({Review}:{Review:Submitform}){
             </div>
           </div>
         </div>
+        
       </>
     );
 }

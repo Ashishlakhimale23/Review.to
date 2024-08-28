@@ -31,12 +31,10 @@ export function DeleteSpace():ReactElement{
     }
 
     async function DeleteApiRequest(Deleteid:string):Promise<any>{
-      try{
+      
       const response =await api.post(`${process.env.BASE_URL}/space/deletespace`,{Deleteid})
       return response.data
-      }catch(error){
-        throw error
-      }
+      
     }
 
     const deleteMutation = useMutation<void,CustomAxiosError,string>({

@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { ReviewCard } from "../component/ReviewCard";
 import {useParams } from "react-router-dom";
 import {api} from "../utils/AxiosApi"
 import { CustomAxiosError, GetAllReviews, Space} from "../types/types";
@@ -8,34 +7,22 @@ import { PreviewCard } from "../component/PreviewCard";
 import {toast} from "react-toastify"
 import { CreateSpaceInfo } from "../component/CreateSpaceInfo";
 import {  useRecoilState} from "recoil";
-import { defaultSpace, EditFormModal, SpaceState } from "../store/atoms";
-import { useEffect, useState} from "react";
+import { defaultSpace,  EditFormModal, SpaceState ,SingleReview } from "../store/atoms";
+import {  useEffect, useState} from "react";
 import loading from "../assets/loading.gif"
 import { ReviewText } from "../component/ReviewText";
-import { ReviewTwitter } from "../component/ReviewTwitter";
+import { useRecoilValue } from "recoil";
+
+import { SingleReviewPreview } from "../component/SingleReviewPreview";
 
 export function Reviews(){
     const {spaceLink} = useParams()
     const [space,setSpace] = useRecoilState(SpaceState)
     const [editModal,setEditModal]= useRecoilState(EditFormModal)
     const [onComponent,setOnComponent] = useState('text review')
-    
-
-    useEffect(() => {
-    const storedSpace = localStorage.getItem("space");
-    if (storedSpace) {
-      setSpace(JSON.parse(storedSpace));
-    } else {
-      setSpace(defaultSpace);
-    }
-
-    return () => {
-      setSpace(defaultSpace);
-      setEditModal(false);
-    };
-  }, []);
-
-  const GetReviews = async (): Promise<GetAllReviews> => {
+    let {openstatus}= useRecoilValue(SingleReview) 
+    console.log(openstatus)
+const GetReviews = async (): Promise<GetAllReviews> => {
     const response = await api.post(`/space/getallreviews`, { spaceLink: spaceLink });
     return response.data.result;
   }
@@ -45,8 +32,21 @@ export function Reviews(){
     queryFn: GetReviews,
     
   });
- 
 
+    useEffect(() => {
+    const storedSpace = localStorage.getItem("space");
+    if (storedSpace) {
+      setSpace(JSON.parse(storedSpace));
+    } else {
+      setSpace(defaultSpace);
+    }
+    return () => {
+      setSpace(defaultSpace);
+      setEditModal(false);
+    };
+  }, []);
+
+  
  useEffect(() => {
     if (isSuccess && data) {
       const newSpace: Space = {
@@ -61,9 +61,9 @@ export function Reviews(){
         _id: data._id
       };
       setSpace(newSpace);
-      localStorage.setItem("space", JSON.stringify(newSpace));
+      localStorage.setItem("space",JSON.stringify(newSpace));
     }
-  }, [isSuccess, data, setSpace]); 
+  }, [isSuccess,data,setSpace]); 
 
   if (isLoading) {
     return (
@@ -97,56 +97,66 @@ export function Reviews(){
     }
     return (
       <>
-  <div className="w-full min-h-screen bg-black">
-    <div className="md:flex md:justify-center md:items-center">
-      <ReviewHeader
-        spaceImage={data?.spaceImage as string}
-        spaceLink={data?.spaceLink as string}
-        spaceName={data?.spaceName!}
-      />
-    </div>
-    <div className="w-full min-h-screen p-3 font-space">
-      <div className="w-full h-fit">
-        <div className={`text-white space-y-1 text-lg bg-silver rounded-md p-2 max-w-xl mx-auto 
-                        middle:max-w-fit middle:space-y-0 middle:space-x-2 middle:flex middle:justify-center `}>
-          <button className={`block w-full middle:w-auto p-2 text-left hover:bg-white hover:text-black rounded-md ${onComponent == 'text review' ? 'bg-white text-black' : ""}`}
-          onClick={()=>{
-            setOnComponent("text review")
-          }}
-          >
-            Text Review
-          </button>
-          <button className={`block w-full middle:w-auto p-2 text-left hover:bg-white hover:text-black rounded-md ${onComponent == 'love' ? 'bg-white text-black' : ""}`}
-          onClick={()=>{
-            setOnComponent("love")
-          }}
-          >
-            Wall of Love
-          </button>
+        <div className="w-full min-h-screen bg-black">
+          <div className="md:flex md:justify-center md:items-center">
+            <ReviewHeader
+              spaceImage={data?.spaceImage as string}
+              spaceLink={data?.spaceLink as string}
+              spaceName={data?.spaceName!}
+            />
+          </div>
+          <div className="w-full min-h-screen p-3 font-space ">
+            <div className="w-full h-fit">
+              <div
+                className={`text-white space-y-1 text-lg bg-silver rounded-md p-2 max-w-xl mx-auto 
+                        middle:max-w-fit middle:space-y-0 middle:space-x-2 middle:flex middle:justify-center `}
+              >
+                <button
+                  className={`block w-full middle:w-auto p-2 text-left hover:bg-white hover:text-black rounded-md ${
+                    onComponent == "text review" ? "bg-white text-black" : ""
+                  }`}
+                  onClick={() => {
+                    setOnComponent("text review");
+                  }}
+                >
+                  Text Review
+                </button>
+                <button
+                  className={`block w-full middle:w-auto p-2 text-left hover:bg-white hover:text-black rounded-md ${
+                    onComponent == "love" ? "bg-white text-black" : ""
+                  }`}
+                  onClick={() => {
+                    setOnComponent("love");
+                  }}
+                >
+                  Wall of Love
+                </button>
 
-          <button className={`block w-full middle:w-auto p-2 text-left hover:bg-white hover:text-black rounded-md ${onComponent == 'single' ? 'bg-white text-black' : ""}`}
-          onClick={()=>{
-            setOnComponent("single")
-          }}
-          >
-            Single review
-          </button>
-
-          <button className={`block w-full middle:w-auto p-2 text-left hover:bg-white hover:text-black rounded-md ${onComponent == 'widget' ? 'bg-white text-black' : ""}`}
-          onClick={()=>{
-            setOnComponent("widget")
-          }}
-          >
-            Widget
-          </button>
+                <button
+                  className={`block w-full middle:w-auto p-2 text-left hover:bg-white hover:text-black rounded-md ${
+                    onComponent == "single" ? "bg-white text-black" : ""
+                  }`}
+                  onClick={() => {
+                    setOnComponent("single");
+                  }}
+                >
+                  Single review
+                </button>
+              </div>
+            </div>
+            <div className="flex-1 mt-2">
+              {onComponent == "text review" && <ReviewText data={data!} />}
+            </div>
+          </div>
         </div>
-      </div>
-      <div className="flex-1 mt-2">
-        {onComponent =='text review' && <ReviewText data={data!}/>}
-        {onComponent =='twitter' && <ReviewTwitter/>}
-      </div>
-    </div>
-  </div>
-</>
+
+        <div
+          className={`${
+            openstatus ? "top-0" : "top-full"
+          }  fixed px-2 w-full h-screen flex justify-center items-center sm:px-10 `}
+        >
+        <SingleReviewPreview/>
+        </div>
+      </>
     );
 }

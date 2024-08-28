@@ -19,9 +19,8 @@ function Login() {
   useEffect(()=>{
     if(logged){
     navigate("/dashboard");
-
     }
-  },[logged])
+  },[logged,navigate])
 
   const UserData = z.object({
     email :z.string().email().refine(

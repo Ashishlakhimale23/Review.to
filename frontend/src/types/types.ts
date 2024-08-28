@@ -19,7 +19,7 @@ export interface PublishedSpace{
   Published:boolean
 }
 
-export interface DeleteSpace{
+export interface DeleteSpaceType{
   DeleteStatus:boolean,
   DeleteValue:string
   DeleteId:string
@@ -38,7 +38,7 @@ export interface Submitform{
   YourName:string,
   YourEmail:string,
   UploadPhoto : File | string,
-  checkbox : boolean,
+  checkbox ?: boolean,
   StarRating :boolean[]
   createdAt?: Date
   WallOfFame?:boolean
@@ -49,4 +49,16 @@ export interface Submitform{
 export interface GetAllReviews extends Space {
   Reviews:Submitform[],
   spaceLink:string
+}
+
+export interface SingleTestiomial{
+  _id:string,
+  spacelink:string,
+  Message:string,
+  AttachImage: string,
+  YourName:string,
+  UploadPhoto :string,
+  StarRating :boolean[]
+  openstatus:boolean
+
 }

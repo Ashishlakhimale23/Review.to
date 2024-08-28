@@ -23,7 +23,6 @@ export function PublishedCard ({spaceName,spaceLink}:{spaceName:string,spaceLink
               <button className="w-full text-white bg-black rounded-md py-2" onClick={()=>{
                 setPublished(defaultPublished)
               }
-
               }>Close</button>
             </div>
           </div>

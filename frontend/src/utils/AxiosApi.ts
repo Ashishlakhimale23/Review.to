@@ -7,7 +7,7 @@ declare module 'axios' {
   }
 }
 
-export let api = axios.create({
+export const api = axios.create({
   baseURL: process.env.BASE_URL,
 });
 
@@ -41,7 +41,7 @@ class Concurrency {
   }
 }
 
-let concurrencyInstance = new Concurrency();
+const concurrencyInstance = new Concurrency();
 
 const refreshToken = async () => {
   const user = auth.currentUser;

@@ -1,4 +1,4 @@
-import { ReactElement, useEffect } from "react";
+import { ReactElement } from "react";
 import { useNavigate } from "react-router-dom";
 import {SpaceDashboard} from "../component/SpaceDashboard"
 import { useRecoilValue } from "recoil"; 
@@ -23,7 +23,7 @@ export function Dashboard():ReactElement{
       return response.data.data.space
     }
 
-    const {data:space,isLoading,isError,error} = useQuery<[{spaceName:string,spaceImage:string,_id:string,spaceLink:string}],CustomAxiosError>({
+    const {data:space,isLoading} = useQuery<[{spaceName:string,spaceImage:string,_id:string,spaceLink:string}],CustomAxiosError>({
       queryKey :["space"],
       queryFn:fetchSpace
     })

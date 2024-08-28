@@ -5,10 +5,10 @@ import { User } from "../model/user"
 import { RemoveAnySpaces } from "../utils/RemoveAnySpaces"
 import { CloudinaryUpload } from "../utils/CloudinaryUpload"
 import { Review } from "../model/review"
-import cloudinary from "../utils/Cloudinary"
-
+import generateIframeResizerScript from "../utils/iframeresizer"
+const iframeResizerScript = generateIframeResizerScript();
 export const CreateSpace =async (req:Request<{},{},{space:FormData & Space,uid:string}>,res:Response)=>{
-
+       
 
     const {space:FormData,uid} = req.body
     console.log(FormData)
@@ -241,5 +241,30 @@ export const DeleteReview=async(req:Request<{},{},{uid:string,Reviewid:string,Sp
 
     }
 
+}
 
+export const GetSingleReview=async(req:Request<{},{},{spacelink:string,id:string}>,res:Response)=>{
+    const spacelink:string = req.body.spacelink
+    const spaceid:string = req.body.id
+
+    if(!spacelink || !spaceid){
+        return res.status(400).json({message:"Incorrect params"})
+    }
+    try{
+        const response = await space.findOne({spacelink:spacelink})
+        
+        const result = await Review.findById(spaceid)
+        console.log(result)
+        return res.status(200).json({result:result})
+
+    }catch(error){
+        return res.status(500).json({message:"internal server error"})
+    }
+
+}
+
+export const iframescript=async(req:Request,res:Response)=>{
+    await res.setHeader('Content-Type', 'application/javascript');
+    return res.send(iframeResizerScript);
+    
 }
