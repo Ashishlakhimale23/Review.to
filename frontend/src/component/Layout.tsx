@@ -12,7 +12,7 @@ import { EditFormModal, PublishedState } from "../store/atoms";
 import { SubmitReview } from "../pages/SubmitReview";
 import { Reviews } from "../pages/Reviews";
 import { SingleReview } from "../pages/SingleReview";
-import { CarouselPage } from "../pages/CarsouelPage";
+import { MansoryPage } from "../pages/Mansorypage";
 
 
 export function Layout():ReactElement{
@@ -39,7 +39,7 @@ export function Layout():ReactElement{
             <Route element={<Login />} path="/login" />
             <Route element={<SubmitReview/>} path={`/review/:spacelink`} /> 
             <Route element={<SingleReview/>} path={`/:spacelink/:id`} />
-            <Route element={<CarouselPage/>} path="/multiple/:spacelink"/>
+            <Route element={<MansoryPage />} path="/multiple/:spacelink"/>
             <Route element={<PrivateRoutes />}>
               <Route path="/createspace" element={<CreateSpace />} />
               <Route element={<Dashboard />} path="/dashboard"></Route>
