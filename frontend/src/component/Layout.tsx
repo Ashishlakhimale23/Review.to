@@ -39,7 +39,7 @@ export function Layout():ReactElement{
             <Route element={<Login />} path="/login" />
             <Route element={<SubmitReview/>} path={`/review/:spacelink`} /> 
             <Route element={<SingleReview/>} path={`/:spacelink/:id`} />
-            <Route element={<MansoryPage />} path="/multiple/:spacelink"/>
+            <Route element={<MansoryPage />} path="/multiple/:spaceLink"/>
             <Route element={<PrivateRoutes />}>
               <Route path="/createspace" element={<CreateSpace />} />
               <Route element={<Dashboard />} path="/dashboard"></Route>

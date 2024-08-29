@@ -14,14 +14,17 @@ import { ReviewText } from "../component/ReviewText";
 import { useRecoilValue } from "recoil";
 
 import { SingleReviewPreview } from "../component/SingleReviewPreview";
+import { MultipleReviewPreview } from "../component/MultipleReviewPreview";
 
 export function Reviews(){
+   
     const {spaceLink} = useParams()
     const [space,setSpace] = useRecoilState(SpaceState)
     const [editModal,setEditModal]= useRecoilState(EditFormModal)
     const [onComponent,setOnComponent] = useState('text review')
     let {openstatus}= useRecoilValue(SingleReview) 
-    console.log(openstatus)
+
+
 const GetReviews = async (): Promise<GetAllReviews> => {
     const response = await api.post(`/space/getallreviews`, { spaceLink: spaceLink });
     return response.data.result;
@@ -132,16 +135,7 @@ const GetReviews = async (): Promise<GetAllReviews> => {
                   Wall of Love
                 </button>
 
-                <button
-                  className={`block w-full middle:w-auto p-2 text-left hover:bg-white hover:text-black rounded-md ${
-                    onComponent == "single" ? "bg-white text-black" : ""
-                  }`}
-                  onClick={() => {
-                    setOnComponent("single");
-                  }}
-                >
-                  Single review
-                </button>
+               
               </div>
             </div>
             <div className="flex-1 mt-2">
@@ -156,6 +150,14 @@ const GetReviews = async (): Promise<GetAllReviews> => {
           }  fixed px-2 w-full h-screen flex justify-center items-center sm:px-10 `}
         >
         <SingleReviewPreview/>
+        </div>
+
+        <div
+          className={`${
+            onComponent == "love" ? "top-0" : "top-full"
+          }  fixed px-2 py-2 w-full h-screen flex justify-center items-center sm:px-10 `}
+        >
+          <MultipleReviewPreview spacelink={data?.spaceLink!} setOnComponent={setOnComponent}/>
         </div>
       </>
     );

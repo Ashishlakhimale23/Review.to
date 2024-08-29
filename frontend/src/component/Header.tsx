@@ -51,10 +51,7 @@ export function Header():ReactElement{
               >
                 Dashboard
               </button >
-              <button className=" px-[10px] py-2 hover:bg-white hover:text-black rounded-md w-full text-left"
-              >
-                Setting 
-              </button >
+              
               <button className="px-[10px] py-2 hover:bg-white hover:text-black rounded-md w-full text-left"
               onClick={()=>{
 

@@ -5,7 +5,7 @@ export function MultipleReviewsCard({ Review }:{Review:MultipleTestiomial}) {
   const { StarRating, Message, AttachImage, UploadPhoto, YourName, createdAt } = Review;
 
   return (
-    <div className="bg-white border-2 border-black rounded-lg overflow-hidden shadow-lg  font-space ">
+    <div className="bg-white border-2 border-black rounded-lg overflow-hidden shadow-lg  font-space h-fit ">
       <div className="p-4 space-y-3">
         <div className="flex items-center space-x-2">
           <img

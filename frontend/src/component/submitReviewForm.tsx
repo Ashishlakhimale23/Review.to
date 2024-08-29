@@ -5,7 +5,7 @@ import { useSetRecoilState } from "recoil";
 import { toast } from "react-toastify";
 import {z} from "zod"
 import axios from "axios";
-import { useMutation } from "@tanstack/react-query";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
 
 interface submitReviewType extends Space{
   spacelink:string
@@ -17,6 +17,7 @@ export function SubmitReviewForm ({space}:{space:submitReviewType}){
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [attachImageBlob,setAttachImageBlob] = useState<string>("")
   const [uploadImageBlob,setUploadImageBlob] = useState<string>("")
+  const queryClient =useQueryClient() 
 
   const UserData = z.object({
     email :z.string().email().refine(
@@ -66,6 +67,8 @@ export function SubmitReviewForm ({space}:{space:submitReviewType}){
     onSuccess:()=>{
     setSubmitReview(submitReviewDefault)
     setSubmitReviewModal(false)
+    queryClient.invalidateQueries({queryKey:['multiplereveiw']})
+    
     },
     onError:(error)=>{
           if (error.response) {

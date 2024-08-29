@@ -9,7 +9,6 @@
             column-count: 1;
         }
         .masonry-sm {
-           
             column-count: 2;
         }
         .masonry-md {
@@ -19,6 +18,6 @@
         .break-inside {
             break-inside: avoid;
         }
-
+        
     }
 }
