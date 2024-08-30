@@ -8,7 +8,6 @@ import { Review } from "../model/review"
 import generateIframeResizerScript from "../utils/iframeresizer"
 const iframeResizerScript = generateIframeResizerScript();
 export const CreateSpace =async (req:Request<{},{},{space:FormData & Space,uid:string}>,res:Response)=>{
-       
 
     const {space:FormData,uid} = req.body
     const firebaseuid = uid
@@ -21,7 +20,6 @@ export const CreateSpace =async (req:Request<{},{},{space:FormData & Space,uid:s
      
         try {
             const resp:number = await space.countDocuments({ spaceName: SpaceName })
-            console.log(resp)
             spaceLink = `${resp ? name+resp :name}`
             const result:number = await space.countDocuments({spaceLink:spaceLink})
             let NoOfSpaces:number = result ? resp + result : result
@@ -42,7 +40,6 @@ export const CreateSpace =async (req:Request<{},{},{space:FormData & Space,uid:s
                 const response = await space.findByIdAndUpdate( _id,NewSpace , {
                     upsert: true, setDefaultsOnInsert: true ,new:true
                 })
-                console.log(response)
                 return res.status(200).json({ spaceLinks: spaceLink, spaceName: spaceName })
             }
             if(!req.file && !isStatus){
@@ -76,14 +73,12 @@ export const CreateSpace =async (req:Request<{},{},{space:FormData & Space,uid:s
                     spaceLink: spaceLink
                 })
                 const result = await NewSpace.save()
-                console.log(result) 
                 await User.findOneAndUpdate({ firebaseUid: firebaseuid }, { $push: { space: result._id } })
                 return res.status(201).json({ spaceName: spaceName, spaceLinks: spaceLink })
             }
             
         
         } catch (error) {
-            console.log(error)
             return res.status(500).json({ message: 'internal server issue' })
         }
  
@@ -98,7 +93,6 @@ export const GetAllSpaces = async (req:Request<{},{},{uid:string}>,res:Response)
             return res.status(500).json({message:"couldnt find the user"})
         })
     }catch(error){
-        console.log(error)
         return res.status(500).json({message:"internal server issue"})
     }
 }
@@ -127,7 +121,6 @@ export const DeleteSpace = async(req:Request<{},{},{uid:string,Deleteid:string}>
 
 export const getSpaceDetails =async(req:Request<{},{},{spacelink:string}>,res:Response)=>{
     const spacelink = req.body.spacelink
-    console.log(spacelink)
     if(!spacelink){
         return res.status(500).json({message:"spacelink not provided"})
     }
@@ -185,7 +178,6 @@ export const submitReivew =async (req:Request,res:Response)=>{
 }
 
 export const GetAllReviews=async(req:Request<{},{},{spaceLink:string,uid:string}>,res:Response)=>{
-    console.log(req.body)
     let spaceLink = req.body.spaceLink
     try{
         const result = await space.findOne({spaceLink:spaceLink}).populate("Reviews") 
@@ -200,14 +192,12 @@ export const GetAllReviews=async(req:Request<{},{},{spaceLink:string,uid:string}
 export const AddtoWallofFame=async(req:Request<{},{},{uid:string,Reviewid:string}>,res:Response)=>{
     const firebaseUid = req.body.uid
     const Reviewid = req.body.Reviewid
-    console.log(req.body)
     if(!firebaseUid || !Reviewid ){
         return res.status(500).json({message:"Error occured try again."})
     }
     else{
         try{
             const response = await Review.findById(Reviewid)
-            console.log(response)
             if(response){
                 const walloffame = response.WallOfFame
                 response.WallOfFame= !response.WallOfFame
@@ -232,11 +222,9 @@ export const DeleteReview=async(req:Request<{},{},{uid:string,Reviewid:string,Sp
     }
     try{
         const response = await Review.findByIdAndDelete(id)
-        console.log(response)
         await space.findByIdAndUpdate(id,{$pull:{'Reviews':id}})
         return res.json({message:"deleted"})
     }catch(error){
-        console.log(error)
         return res.status(500).json({message:"internal server error"})
 
     }
@@ -252,9 +240,7 @@ export const GetSingleReview=async(req:Request<{},{},{spacelink:string,id:string
     }
     try{
         const response = await space.findOne({spacelink:spacelink})
-        
         const result = await Review.findById(spaceid)
-        console.log(result)
         return res.status(200).json({result:result})
 
     }catch(error){
@@ -265,7 +251,6 @@ export const GetSingleReview=async(req:Request<{},{},{spacelink:string,id:string
 
 export const GetMultipleReview = async (req: Request<{}, {}, { spacelink: string }>, res: Response) => {
     const { spacelink } = req.body;
-    console.log(spacelink);
 
     if (!spacelink) {
         return res.status(400).json({ message: "Incorrect params" });
@@ -285,7 +270,6 @@ export const GetMultipleReview = async (req: Request<{}, {}, { spacelink: string
             return res.status(404).json({ message: "Space not found" });
         }
 
-        console.log(result);
         return res.status(200).json({result: result.Reviews });
     } catch (error) {
         console.error('Error in GetMultipleReview:', error);

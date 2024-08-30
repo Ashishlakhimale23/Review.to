@@ -5,15 +5,15 @@ import { CustomAxiosError, Submitform } from "../types/types"
 import { SingleReviewCard } from "../component/SingleReviewCard"
 import { useEffect,useRef } from "react"
 export function SingleReview(){
-    const {spacelink,id} = useParams()
-     const containerRef = useRef<HTMLDivElement>(null);
-  
-   useEffect(() => {
+  const { spacelink, id } = useParams();
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
     const sendHeight = () => {
       if (containerRef.current) {
         const height = containerRef.current.offsetHeight;
-        console.log('Sending height:', height);
-        window.parent.postMessage({ type: 'resize', height }, '*');
+        console.log("Sending height:", height);
+        window.parent.postMessage({ type: "resize", height }, "*");
       }
     };
 
@@ -24,8 +24,8 @@ export function SingleReview(){
     }
 
     // Listen for height requests from the parent
-    window.addEventListener('message', (event) => {
-      if (event.data && event.data.type === 'requestHeight') {
+    window.addEventListener("message", (event) => {
+      if (event.data && event.data.type === "requestHeight") {
         sendHeight();
       }
     });
@@ -36,24 +36,24 @@ export function SingleReview(){
       }
     };
   }, []);
-    console.log(spacelink,id)
-    async function getdata():Promise<Submitform>{
-        const response = await axios.post(`${process.env.BASE_URL}/space/getsinglereview`,{spacelink:spacelink,id:id})
-        console.log(response)
-        return response.data.result
-    }
-    const {data,isError} = useQuery<Submitform,CustomAxiosError>({
-    queryKey:['singlereveiw'],
-    queryFn:getdata
-    })
-    if(!data || isError){
-        return <p className="text-red-400">Error.....</p> 
-    }
-    
-    return (
-      <div className="p-4 md:flex md:justify-center mt-1" ref={containerRef} >
-        <SingleReviewCard Review={data} />
-      </div>
+  async function getdata(): Promise<Submitform> {
+    const response = await axios.post(
+      `${process.env.BASE_URL}/space/getsinglereview`,
+      { spacelink: spacelink, id: id }
     );
+    return response.data.result;
+  }
+  const { data, isError } = useQuery<Submitform, CustomAxiosError>({
+    queryKey: ["singlereveiw"],
+    queryFn: getdata,
+  });
+  if (!data || isError) {
+    return <p className="text-red-400">Error.....</p>;
+  }
 
+  return (
+    <div className="p-4 md:flex md:justify-center mt-1" ref={containerRef}>
+      <SingleReviewCard Review={data} />
+    </div>
+  );
 }

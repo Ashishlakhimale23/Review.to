@@ -25,7 +25,6 @@ export const handlesignin = async(req:Request<{},{},{idtoken:string,username:str
          await Newuser.save().then(()=>{
             return res.status(200).json({message:"created account"})
          }).catch(err=>{
-            console.log(err)
             return res.status(500).json({message:"failed to create account"})
          })
        }
@@ -37,11 +36,8 @@ export const handlesignin = async(req:Request<{},{},{idtoken:string,username:str
 
 export const handlelogin=async(req:Request<{},{},{idtoken:string}>,res:Response)=>{
     const idtoken = await admin.auth().verifyIdToken(req.body.idtoken)
-    console.log(idtoken.email,idtoken.uid)
     const userexist= await User.findOne({firebaseUid:idtoken.uid,email:idtoken.email}) 
-    console.log(userexist)
     if(!userexist){
-        console.log(userexist)
         return res.json({message:"user doesnt exist"}).status(404)
     }
     else{

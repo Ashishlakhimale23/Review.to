@@ -147,8 +147,6 @@ export function SubmitReviewForm ({space}:{space:submitReviewType}){
         const Prasedtwitter = verifyTwitter({twitter:submitReview.SocialLink!.toLowerCase()})
         const PrasedX = verifyX({twitter:submitReview.SocialLink!.toLowerCase()})
         if(spaceSocialLinks){
-          console.log(submitReview.SocialLink )
-          console.log(PrasedX , Prasedtwitter)
           if(!Prasedtwitter.success && !PrasedX.success){
             return toast.error("Invalid twitter url")
           }
@@ -190,7 +188,6 @@ export function SubmitReviewForm ({space}:{space:submitReviewType}){
               await submitMutation.mutateAsync(formData);
               toast.success("Review submitted successfully!");
             } catch (error) {
-              console.error(error);
               toast.error("Failed to submit review. Please try again.");
             }
 

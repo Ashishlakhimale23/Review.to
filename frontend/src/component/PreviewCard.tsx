@@ -7,41 +7,63 @@ export function PreviewCard({space}:{space:Space}){
     const spaceLogo = useRecoilValue(SpaceLogo)
     const pathname  = window.location.pathname
 
-    return(
-        <>
+    return (
+      <>
         <div className="w-full md:max-w-96 h-fit border-2 border-black font-space mb-9 shadow-2xl rounded-md p-3 sm:py-10 sm:px-8">
-            <div className="flex justify-center mb-3">
-                <img src={typeof spaceImage === 'string' ? spaceImage : spaceImage instanceof File  ? spaceLogo : defaultSpace.spaceImage as string}  alt="" className="w-14 h-14 rounded-full " />
-            </div>
+          <div className="flex justify-center mb-3">
+            <img
+              src={
+                typeof spaceImage === "string"
+                  ? spaceImage
+                  : spaceImage instanceof File
+                  ? spaceLogo
+                  : (defaultSpace.spaceImage as string)
+              }
+              alt=""
+              className="w-14 h-14 rounded-full "
+            />
+          </div>
 
-            <div className="mb-3 ">
-                <p className="text-xl text-center break-words ">{spaceTitle.length?spaceTitle:"Header goes here..."}</p>
-            </div>
+          <div className="mb-3 ">
+            <p className="text-xl text-center break-words ">
+              {spaceTitle.length ? spaceTitle : "Header goes here..."}
+            </p>
+          </div>
 
-            <div className="mb-3 ">
-                <p className=" text-center break-words">{spaceCustomMessage.length?spaceCustomMessage:"your custom message goes here..."}</p>
-            </div>
+          <div className="mb-3 ">
+            <p className=" text-center break-words">
+              {spaceCustomMessage.length
+                ? spaceCustomMessage
+                : "your custom message goes here..."}
+            </p>
+          </div>
 
-            <div className="mb-3">
-                <p className="text-xl mb-1">Question</p>
-                <div className="space-y-1">
-                    {
-                       spaceQuestion.map((question,index) => (
-                       <div key={index} className="flex space-x-1"> 
-                       
+          <div className="mb-3">
+            <p className="text-xl mb-1">Question</p>
+            <div className="space-y-1">
+              {spaceQuestion.map((question, index) => (
+                <div key={index} className="flex space-x-1">
                   <p className="text-sm">{"."}</p>
-                        <p key={index} className="break-words">{question}</p>
-                       </div>
-                       ))
-                    }
+                  <p key={index} className="break-words">
+                    {question}
+                  </p>
                 </div>
+              ))}
             </div>
+          </div>
 
-            <div><button className="w-full bg-black text-white py-2 rounded-md" disabled={pathname === '/createspace'} onClick={()=>{
-                setSubmitReviewModal(true)
-            }}>send in text</button></div>
-
+          <div>
+            <button
+              className="w-full bg-black text-white py-2 rounded-md"
+              disabled={pathname === "/createspace"}
+              onClick={() => {
+                setSubmitReviewModal(true);
+              }}
+            >
+              send in text
+            </button>
+          </div>
         </div>
-        </>
-    ) 
+      </>
+    ); 
 }

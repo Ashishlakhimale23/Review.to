@@ -10,7 +10,6 @@ export const AuthMidddleware=async(req:Request,res:Response,next:NextFunction)=>
             const authtoken = token.split(" ")[1]
             let checkrevoked = true 
             await admin.auth().verifyIdToken(authtoken,checkrevoked).then((payload)=>{
-                console.log(payload)
                 req.body.uid = payload.uid 
             
                 next()

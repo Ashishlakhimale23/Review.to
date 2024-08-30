@@ -14,150 +14,160 @@ function Signin() {
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [logged,setLogged] = useRecoilState<boolean>(LoggedState)
-  type SchemaProp = z.infer<typeof UserData>
+  const [logged, setLogged] = useRecoilState<boolean>(LoggedState);
+  type SchemaProp = z.infer<typeof UserData>;
 
-  useEffect(()=>{
-    if(logged){
-navigate("/dashboard")
-
+  useEffect(() => {
+    if (logged) {
+      navigate("/dashboard");
     }
-  },[logged,navigate])
+  }, [logged, navigate]);
 
   const UserData = z.object({
-    email :z.string().email().refine(
-  (email) => email.endsWith('@gmail.com'),
-  {
-    message: 'Must be a valid Gmail address',
-  }
-),
-    password : z.string().regex(/^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$/,"Password must be atleast 6 character longs should contain atleast one special character,number,lower case"),
- 
-  })
+    email: z
+      .string()
+      .email()
+      .refine((email) => email.endsWith("@gmail.com"), {
+        message: "Must be a valid Gmail address",
+      }),
+    password: z
+      .string()
+      .regex(
+        /^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$/,
+        "Password must be atleast 6 character longs should contain atleast one special character,number,lower case"
+      ),
+  });
 
-  const DataVerfication = (data:SchemaProp) =>{
-      const ParsedResult = UserData.safeParse(data)
-      return ParsedResult
-  }
+  const DataVerfication = (data: SchemaProp) => {
+    const ParsedResult = UserData.safeParse(data);
+    return ParsedResult;
+  };
 
-  const handelsubmit = useCallback(async (e:React.FormEvent<HTMLFormElement>)=>{
-    e.preventDefault()
-    try{
-        if(!email.length){
-            return toast.error("Fill the email field")
+  const handelsubmit = useCallback(
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      try {
+        if (!email.length) {
+          return toast.error("Fill the email field");
         }
-        if(!password.length){
-            return toast.error("Fill the password field");
-        }
-     
-          else{
-        const data = {
-            email:email,
-            password:password,
-            
-        }
-        const PrasedResult = DataVerfication(data)
-          if(!PrasedResult.success){
-            const problem:string= PrasedResult.error.issues[0].message
-            return toast(problem)
-          }else{
-            await createUserWithEmailAndPassword(auth,email,password).then(async(userCredential)=>{
-                const idtoken =await userCredential.user.getIdToken(true)
-                await axios.post(`${process.env.BASE_URL}/user/signup`,{idtoken:idtoken}).then((resp)=>{
-                  if(Object.values(resp.data).includes("created account")){
-                   localStorage.setItem("AccessToken",idtoken) 
-                      setLogged(true)
-
-                  }else{
-                    return toast.error("Unable to signup please try again")
-                  }
-                   
-                }).catch((error)=>{
-                  console.log(error)
-                  return toast.error("Internal server issue")
-                })
+        if (!password.length) {
+          return toast.error("Fill the password field");
+        } else {
+          const data = {
+            email: email,
+            password: password,
+          };
+          const PrasedResult = DataVerfication(data);
+          if (!PrasedResult.success) {
+            const problem: string = PrasedResult.error.issues[0].message;
+            return toast(problem);
+          } else {
+            await createUserWithEmailAndPassword(auth, email, password)
+              .then(async (userCredential) => {
+                const idtoken = await userCredential.user.getIdToken(true);
+                await axios
+                  .post(`${process.env.BASE_URL}/user/signup`, {
+                    idtoken: idtoken,
+                  })
+                  .then((resp) => {
+                    if (Object.values(resp.data).includes("created account")) {
+                      localStorage.setItem("AccessToken", idtoken);
+                      setLogged(true);
+                    } else {
+                      return toast.error("Unable to signup please try again");
+                    }
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                    return toast.error("Internal server issue");
+                  });
                 //axios
-            }).catch((error)=>{
-                const errorMessage:string = error.code
-                switch(errorMessage){ 
+              })
+              .catch((error) => {
+                const errorMessage: string = error.code;
+                switch (errorMessage) {
                   case "auth/weak-password":
-                        toast.error("weak password")
-                        break;
+                    toast.error("weak password");
+                    break;
                   case "auth/email-already-in-use":
-                        toast.error("email already in use")
-                        break;
+                    toast.error("email already in use");
+                    break;
                   case "auth/invalid-email":
-                        toast.error("invalid email")
-                        break;
+                    toast.error("invalid email");
+                    break;
                   case "auth/operation-not-allowed":
-                     toast.error("email/password accounts are not enabled")
-                     break;
+                    toast.error("email/password accounts are not enabled");
+                    break;
                   default:
                     break;
-                } 
-                console.log(error)
-                
-            })
+                }
+              });
           }
         }
-    }catch(error){
-        return toast("unexpected error")
-    }
-   
-      },[email,password,DataVerfication,setLogged]
+      } catch (error) {
+        return toast("unexpected error");
+      }
+    },
+    [email, password, DataVerfication, setLogged]
   );
 
-const handlegooglesubmit = async()=>{
-  const provider = new GoogleAuthProvider()
-  try{
+  const handlegooglesubmit = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider)
+        .then(async (result) => {
+          const idtoken: string | undefined = await result.user.getIdToken(
+            true
+          );
 
-  await signInWithPopup(auth,provider).then(async (result)=>{
-    const idtoken:string | undefined = await result.user.getIdToken(true) 
-     
-    if(!String(idtoken).length  || idtoken === undefined){
-      return toast.error("error while signing up")
+          if (!String(idtoken).length || idtoken === undefined) {
+            return toast.error("error while signing up");
+          }
+          try {
+            await axios
+              .post(`${process.env.BASE_URL}/user/signup`, {
+                idtoken: idtoken,
+                username: result.user.displayName,
+              })
+              .then((resp) => {
+                if (Object.values(resp.data).includes("created account")) {
+                  localStorage.setItem("AccessToken", idtoken);
+                  setLogged(true);
+                } else {
+                  return toast.error(resp.data.message);
+                }
+              })
+              .catch((error) => {
+                console.log(error);
+                return toast.error("Internal server issue");
+              });
+          } catch (error) {
+            return toast.error("Internal server issue");
+          }
+        })
+        .catch((error) => {
+          const errorMessage: string = error.code;
+          switch (errorMessage) {
+            case "auth/operation-not-supported-in-this-environment":
+              toast.error("http protocol is not supported.please use http");
+              break;
+            case "auth/popup-blocked":
+              toast.error("popup has been blocked by the browser");
+              break;
+            case "auth/popup-closed-by-user":
+              toast.error("popup has been closed by user before f");
+              break;
+            case "auth/operation-not-allowed":
+              toast.error("email/password accounts are not enabled");
+              break;
+            default:
+              break;
+          }
+        });
+    } catch (error) {
+      toast.error("internal server issues");
     }
-    try{
-    await axios.post(`${process.env.BASE_URL}/user/signup`,{idtoken:idtoken,username:result.user.displayName}).then((resp)=>{
-                  if(Object.values(resp.data).includes("created account")){
-                   localStorage.setItem("AccessToken",idtoken) 
-                      setLogged(true)
-                  }else{
-                    return toast.error(resp.data.message)
-                  }
-                   
-                }).catch((error)=>{
-                  console.log(error)
-                  return toast.error("Internal server issue")
-                })
-    }catch(error){
-      console.log(error)
-      return toast.error("Internal server issue")
-    }
-  }).catch((error)=>{
-    const errorMessage:string = error.code
-                switch(errorMessage){ 
-                  case "auth/operation-not-supported-in-this-environment":
-                        toast.error("http protocol is not supported.please use http")
-                        break;
-                  case "auth/popup-blocked":
-                        toast.error("popup has been blocked by the browser")
-                        break;
-                  case "auth/popup-closed-by-user":
-                        toast.error("popup has been closed by user before f")
-                        break;
-                  case "auth/operation-not-allowed":
-                     toast.error("email/password accounts are not enabled")
-                     break;
-                  default:
-                    break;
-                } 
-  })
-}catch(error){
-  console.log(error)
-  toast.error("internal server issues")
-}
-}
+  };
   return (
     <>
       <div className="font-space min-h-screen flex flex-col justify-center">
@@ -172,7 +182,6 @@ const handlegooglesubmit = async()=>{
           <label htmlFor="">
             Already have an account ?{" "}
             <a href="/login" className="underline hover:text-blue-500">
-           
               Log in
             </a>
           </label>
