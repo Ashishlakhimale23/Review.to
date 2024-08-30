@@ -2,22 +2,3 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer utilities {
-    @variants responsive {
-        .masonry {
-           
-            column-count: 1;
-        }
-        .masonry-sm {
-            column-count: 2;
-        }
-        .masonry-md {
-           
-            column-count: 3;
-        }
-        .break-inside {
-            break-inside: avoid;
-        }
-        
-    }
-}

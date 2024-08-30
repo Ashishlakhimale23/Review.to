@@ -13,7 +13,6 @@ export const defaultSpace:Space = {
     ],
   spaceSocialLinks:false,
   spaceStarRating:false,
-  spaceTheme:false,
   _id:""
 }
 
@@ -29,7 +28,7 @@ export const defaultDeleteState:DeleteSpaceType={
   DeleteId:'',
 }
 
-export const defaultSingleReview:SingleTestiomial={
+export let defaultSingleReview:SingleTestiomial={
   _id:'',
   spacelink:"",
   Message:'',

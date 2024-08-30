@@ -38,7 +38,7 @@ function Login() {
       return ParsedResult
   }
 
-  const handelsubmit = useCallback(async (e:any)=>{
+  const handelsubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>)=>{
     e.preventDefault()
     try{
         if(!email.length){
@@ -105,7 +105,7 @@ function Login() {
         return toast("unexpected error")
     }
    
-      },[email,password]
+      },[email,password,setLogged]
   );
 
  const handlegooglesubmit = async()=>{

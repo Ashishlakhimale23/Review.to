@@ -8,7 +8,6 @@ export interface Space{
   spaceQuestion: string[],
   spaceSocialLinks :boolean,
   spaceStarRating : boolean ,
-  spaceTheme :boolean,
   _id?:string
 
 }

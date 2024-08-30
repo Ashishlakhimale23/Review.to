@@ -13,7 +13,7 @@ import { SubmitReview } from "../pages/SubmitReview";
 import { Reviews } from "../pages/Reviews";
 import { SingleReview } from "../pages/SingleReview";
 import { MansoryPage } from "../pages/Mansorypage";
-
+import { ErrorPage } from "../pages/Error";
 
 export function Layout():ReactElement{
   const authtoken = localStorage.getItem("AccessToken")
@@ -40,6 +40,7 @@ export function Layout():ReactElement{
             <Route element={<SubmitReview/>} path={`/review/:spacelink`} /> 
             <Route element={<SingleReview/>} path={`/:spacelink/:id`} />
             <Route element={<MansoryPage />} path="/multiple/:spaceLink"/>
+            <Route element={<ErrorPage/>} path="/Error"/>
             <Route element={<PrivateRoutes />}>
               <Route path="/createspace" element={<CreateSpace />} />
               <Route element={<Dashboard />} path="/dashboard"></Route>

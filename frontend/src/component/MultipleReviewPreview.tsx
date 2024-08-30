@@ -1,4 +1,3 @@
-import React, { SetStateAction } from "react";
 import { toast } from "react-toastify";
 
 export function MultipleReviewPreview({spacelink,setOnComponent}:{spacelink:string,setOnComponent:React.Dispatch<React.SetStateAction<string>>}){
@@ -39,7 +38,7 @@ export function MultipleReviewPreview({spacelink,setOnComponent}:{spacelink:stri
             <p className="text-2xl font-semibold">Preview</p>
           </div>
 <div className=" w-full flex  justify-center">
-            <a href={`http://localhost:5173/multiple/${spacelink}`} target="_blank" className="hover:underline hover:text-blue-600">
+            <a href={`http://localhost:5173/multiple/${spacelink}`} rel="noopener noreferrer" target="_blank" className="hover:underline hover:text-blue-600">
 {`http://localhost:5173/multiple/${spacelink}`}
             </a>
           </div>

@@ -15,11 +15,11 @@ export function Header():ReactElement{
     }else{
       document.body.removeEventListener('mousedown',settingmodal)
     }
-  },[setSettingModal])
+  },[settingsModal,setSettingModal,settingmodal])
 
-  function settingmodal(e:any){
+  function settingmodal(e:MouseEvent){
     if(imgRef.current !== null && modalRef.current!==null){
-      if(imgRef.current && !imgRef.current.contains(e.target) && modalRef.current && !modalRef.current.contains(e.target)){
+      if(imgRef.current && !imgRef.current.contains(e.target as Node) && modalRef.current && !modalRef.current.contains(e.target as Node)){
         setSettingModal(false)
       }
     }

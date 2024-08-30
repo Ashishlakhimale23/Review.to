@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 export function SingleReviewPreview(){
     const [singlereveiw,setSinglereveiw]  = useRecoilState(SingleReview)
     const {openstatus,spacelink,_id,Message,StarRating,YourName,AttachImage,UploadPhoto} = singlereveiw
-    let Review:Submitform= {
+    const Review:Submitform= {
         Message:Message,
         YourName:YourName,
         AttachImage:AttachImage,

@@ -22,7 +22,7 @@ function Signin() {
 navigate("/dashboard")
 
     }
-  },[logged])
+  },[logged,navigate])
 
   const UserData = z.object({
     email :z.string().email().refine(
@@ -40,7 +40,7 @@ navigate("/dashboard")
       return ParsedResult
   }
 
-  const handelsubmit = useCallback(async (e:any)=>{
+  const handelsubmit = useCallback(async (e:React.FormEvent<HTMLFormElement>)=>{
     e.preventDefault()
     try{
         if(!email.length){
@@ -104,7 +104,7 @@ navigate("/dashboard")
         return toast("unexpected error")
     }
    
-      },[email,password]
+      },[email,password,DataVerfication,setLogged]
   );
 
 const handlegooglesubmit = async()=>{

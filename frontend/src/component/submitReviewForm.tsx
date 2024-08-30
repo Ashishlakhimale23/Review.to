@@ -19,17 +19,36 @@ export function SubmitReviewForm ({space}:{space:submitReviewType}){
   const [uploadImageBlob,setUploadImageBlob] = useState<string>("")
   const queryClient =useQueryClient() 
 
-  const UserData = z.object({
+  const DataEmail = z.object({
     email :z.string().email().refine(
   (email) => email.endsWith('@gmail.com'),
   {
     message: 'Must be a valid Gmail address',
   })})
 
+  const DataTwitter = z.object({
+    twitter : z.string().regex(/^https:\/\/twitter\.com\/[A-Za-z0-9_]+$/,{
+      message:"Invalid twitter url"
+    })
+  })
+  const DataX= z.object({
+    twitter : z.string().regex(/^https:\/\/x\.com\/[A-Za-z0-9_]+$/,{
+      message:"Invalid twitter url"
+    })
+  })
+
 
   const verifyEmail = (data:object)=>{
-      const ParsedData = UserData.safeParse(data)
+      const ParsedData = DataEmail.safeParse(data)
       return ParsedData
+  }
+  const verifyTwitter = (data:object)=>{
+    const ParsedData = DataTwitter.safeParse(data)
+    return ParsedData
+  }
+  const verifyX = (data:object)=>{
+    const ParsedData = DataX.safeParse(data)
+    return ParsedData
   }
 
   
@@ -53,8 +72,8 @@ export function SubmitReviewForm ({space}:{space:submitReviewType}){
     return true
   }
 
-  const submitreviewmethod =async(formdata:FormData):Promise<any>=>{
-    const response = await axios.post<any>("http://localhost:8000/space/submitreview",formdata,{
+  const submitreviewmethod =async(formdata:FormData):Promise<{message:string}>=>{
+    const response = await axios.post(`${process.env.BASE_URL}/space/submitreview`,formdata,{
       headers:{
         'Content-Type':"multipart/form-data"
       }
@@ -62,7 +81,7 @@ export function SubmitReviewForm ({space}:{space:submitReviewType}){
     return response.data
   }
 
-  const submitMutation = useMutation<any,CustomAxiosError,FormData>({
+  const submitMutation = useMutation<{message:string},CustomAxiosError,FormData>({
     mutationFn : (formdata:FormData)=>submitreviewmethod(formdata),
     onSuccess:()=>{
     setSubmitReview(submitReviewDefault)
@@ -102,7 +121,7 @@ export function SubmitReviewForm ({space}:{space:submitReviewType}){
   
   const submitForm=async()=>{
     const no = verifythenoofcharacters()
-    console.log(no)
+    
     if(!no){
       return toast.error("writes some message atleast 30 character")
     }
@@ -124,11 +143,21 @@ export function SubmitReviewForm ({space}:{space:submitReviewType}){
       }
     }
 
-        const PrasedResult = verifyEmail({email:submitReview.YourEmail})
+        const PrasedResult = verifyEmail({email:submitReview.YourEmail.toLowerCase()})
+        const Prasedtwitter = verifyTwitter({twitter:submitReview.SocialLink!.toLowerCase()})
+        const PrasedX = verifyX({twitter:submitReview.SocialLink!.toLowerCase()})
+        if(spaceSocialLinks){
+          console.log(submitReview.SocialLink )
+          console.log(PrasedX , Prasedtwitter)
+          if(!Prasedtwitter.success && !PrasedX.success){
+            return toast.error("Invalid twitter url")
+          }
+        }
           if(!PrasedResult.success){
             const problem:string= PrasedResult.error.issues[0].message
             return toast.error(problem)
           }
+
           else{
             const formData = new FormData();
            
@@ -158,8 +187,7 @@ export function SubmitReviewForm ({space}:{space:submitReviewType}){
             formData.append("spacelink",spacelink)
             
             try {
-              const result = await submitMutation.mutateAsync(formData);
-              console.log(result);
+              await submitMutation.mutateAsync(formData);
               toast.success("Review submitted successfully!");
             } catch (error) {
               console.error(error);
@@ -167,8 +195,6 @@ export function SubmitReviewForm ({space}:{space:submitReviewType}){
             }
 
           }
-    
-
   }
   
     return (

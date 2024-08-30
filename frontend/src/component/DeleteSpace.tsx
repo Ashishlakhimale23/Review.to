@@ -1,4 +1,4 @@
-import { ReactElement, useEffect,useRef, useState } from "react";
+import  { ReactElement, useEffect,useRef, useState } from "react";
 import { useRecoilState } from "recoil";
 import { DeleteState } from "../store/atoms";
 import { defaultDeleteState } from "../store/atoms";
@@ -19,36 +19,50 @@ export function DeleteSpace():ReactElement{
     useEffect(()=>{
       if(DeleteStatus){
         document.body.addEventListener("mousedown",UnselectTheDeleteSpace)
+        if(ButtonRef.current){
+        ButtonRef.current.disabled =false 
+        ButtonRef.current.innerText = "Delete Space"
+        }
       }else{
         document.body.removeEventListener("mousedown",UnselectTheDeleteSpace)
       }
     },[DeleteStatus])
 
-    function UnselectTheDeleteSpace(e:any){
-      if(DeleteSpaceModal.current && !DeleteSpaceModal.current.contains(e.target) ){
+    function UnselectTheDeleteSpace(e:MouseEvent){
+      if(e && DeleteSpaceModal.current && !DeleteSpaceModal.current.contains(e.target as Node) ){
         setDeleteSpace(defaultDeleteState)
+        if(ButtonRef.current){
+        ButtonRef.current.disabled =false 
+        ButtonRef.current.innerText = "Delete Space"
+        }
       }
     }
 
-    async function DeleteApiRequest(Deleteid:string):Promise<any>{
+    async function DeleteApiRequest(Deleteid:string):Promise<{message:string}>{
       
       const response =await api.post(`${process.env.BASE_URL}/space/deletespace`,{Deleteid})
       return response.data
       
     }
 
-    const deleteMutation = useMutation<void,CustomAxiosError,string>({
+    const deleteMutation = useMutation<{message:string},CustomAxiosError,string>({
       mutationFn:(Deleteid:string)=>DeleteApiRequest(Deleteid),
       onSuccess:()=>{
-      if(ButtonRef.current){
+        toast.success("Space deleted")
+        setDeleteSpace(defaultDeleteState)
+        
+        setSpaceid("")
+        if(ButtonRef.current){
         ButtonRef.current.disabled =false 
         ButtonRef.current.innerText = "Delete Space"
-      }
-        setDeleteSpace(defaultDeleteState)
-        toast.success("Space deleted")
+        }
         queryClient.invalidateQueries({queryKey:['space']})
       },
       onError:(error)=>{
+          if(ButtonRef.current){
+              ButtonRef.current.disabled =false 
+              ButtonRef.current.innerText = "Delete Space"
+            }
           if (error.response) {
             return toast.error(
                error.response.data?.message || "Error creating space"
@@ -84,7 +98,7 @@ export function DeleteSpace():ReactElement{
           <div className="space-y-2">
             <div >
               <p>Enter the space id <p className="text-red-500">{DeleteValue}</p></p>
-              <input type="text" className="w-full outline-none border-gray-400 border-2 rounded-md focus:border-2 focus:border-black px-2 py-1" onChange={(e)=>{
+              <input type="text" className="w-full outline-none border-gray-400 border-2 rounded-md focus:border-2 focus:border-black px-2 py-1" value={spaceid} onChange={(e)=>{
                     setSpaceid(e.target.value)
                     wrong ? setWrong(false):null
               }} />

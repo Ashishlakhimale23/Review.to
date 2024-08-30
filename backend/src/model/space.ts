@@ -26,10 +26,6 @@ const Space = new mongoose.Schema({
         type:Boolean,
         required:true
     },
-    spaceTheme:{
-        type:Boolean,
-        required:true
-    },
     spaceStarRating:{
         type:Boolean,
         required:true

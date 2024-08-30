@@ -12,7 +12,6 @@ import {  useEffect, useState} from "react";
 import loading from "../assets/loading.gif"
 import { ReviewText } from "../component/ReviewText";
 import { useRecoilValue } from "recoil";
-
 import { SingleReviewPreview } from "../component/SingleReviewPreview";
 import { MultipleReviewPreview } from "../component/MultipleReviewPreview";
 
@@ -22,7 +21,7 @@ export function Reviews(){
     const [space,setSpace] = useRecoilState(SpaceState)
     const [editModal,setEditModal]= useRecoilState(EditFormModal)
     const [onComponent,setOnComponent] = useState('text review')
-    let {openstatus}= useRecoilValue(SingleReview) 
+    const {openstatus}= useRecoilValue(SingleReview) 
 
 
 const GetReviews = async (): Promise<GetAllReviews> => {
@@ -35,7 +34,6 @@ const GetReviews = async (): Promise<GetAllReviews> => {
     queryFn: GetReviews,
     
   });
-
     useEffect(() => {
     const storedSpace = localStorage.getItem("space");
     if (storedSpace) {
@@ -59,7 +57,6 @@ const GetReviews = async (): Promise<GetAllReviews> => {
         spaceCustomMessage: data.spaceCustomMessage,
         spaceSocialLinks: data.spaceSocialLinks,
         spaceStarRating: data.spaceStarRating,
-        spaceTheme: data.spaceTheme,
         spaceTitle: data.spaceTitle,
         _id: data._id
       };
@@ -105,7 +102,7 @@ const GetReviews = async (): Promise<GetAllReviews> => {
             <ReviewHeader
               spaceImage={data?.spaceImage as string}
               spaceLink={data?.spaceLink as string}
-              spaceName={data?.spaceName!}
+              spaceName={data?.spaceName as string}
             />
           </div>
           <div className="w-full min-h-screen p-3 font-space ">
@@ -129,17 +126,23 @@ const GetReviews = async (): Promise<GetAllReviews> => {
                     onComponent == "love" ? "bg-white text-black" : ""
                   }`}
                   onClick={() => {
-                    setOnComponent("love");
+                    !data?.Reviews.filter(review=>review.WallOfFame ==true).length ? toast.error("Wall of love is empty"):
+                    setOnComponent("love")
                   }}
                 >
                   Wall of Love
                 </button>
-
-               
               </div>
             </div>
             <div className="flex-1 mt-2">
-              {onComponent == "text review" && <ReviewText data={data!} />}
+              {!data?.Reviews.length && (
+                <div className="text-2xl font-space text-white w-full text-center p-5">
+                  No Reviews Present
+                </div>
+              )}
+              {onComponent == "text review" && data && (
+                <ReviewText data={data} />
+              )}
             </div>
           </div>
         </div>
@@ -149,16 +152,21 @@ const GetReviews = async (): Promise<GetAllReviews> => {
             openstatus ? "top-0" : "top-full"
           }  fixed px-2 w-full h-screen flex justify-center items-center sm:px-10 `}
         >
-        <SingleReviewPreview/>
+          <SingleReviewPreview />
         </div>
 
-        <div
-          className={`${
-            onComponent == "love" ? "top-0" : "top-full"
+        <div className={`${
+            onComponent == "love"  ? "top-0" : "top-full"
           }  fixed px-2 py-2 w-full h-screen flex justify-center items-center sm:px-10 `}
         >
-          <MultipleReviewPreview spacelink={data?.spaceLink!} setOnComponent={setOnComponent}/>
+          {onComponent == "love" && (
+            <MultipleReviewPreview
+              spacelink={data?.spaceLink as string}
+              setOnComponent={setOnComponent}
+            />
+          )}
         </div>
+
       </>
     );
 }

@@ -12,6 +12,7 @@ import { DeleteState } from "../store/atoms";
 import "react-toastify/dist/ReactToastify.css";
 import { CustomAxiosError } from "../types/types";
 import loading from "../assets/loading.gif"
+import {toast} from "react-toastify"
 export function Dashboard():ReactElement{
     const navigate = useNavigate()
     const {Published,PublishedName,PublishedLink} = useRecoilValue<PublishedSpace>(PublishedState)
@@ -19,11 +20,10 @@ export function Dashboard():ReactElement{
 
     async function fetchSpace(){
       const response = await api.get(`${process.env.BASE_URL}/space/getspace`)
-      console.log(response)
       return response.data.data.space
     }
 
-    const {data:space,isLoading} = useQuery<[{spaceName:string,spaceImage:string,_id:string,spaceLink:string}],CustomAxiosError>({
+    const {data:space,isLoading,isError,error} = useQuery<[{spaceName:string,spaceImage:string,_id:string,spaceLink:string}],CustomAxiosError>({
       queryKey :["space"],
       queryFn:fetchSpace
     })
@@ -34,6 +34,21 @@ if (isLoading) {
         <img src={loading} alt="" />
       </div>
     );
+  }
+
+  if(isError){
+if (error.response) {
+            toast.error(
+               error.response.data?.message || "Error creating space"
+             )
+             window.location.href ="/error"
+           } else if (error.request) {
+              toast.error("No response from server. Please try again.");
+             window.location.href ="/error"
+           } else {
+              toast.error("Error setting up request. Please try again.");
+             window.location.href ="/error"
+           }
   }
     if(Published){
       return (

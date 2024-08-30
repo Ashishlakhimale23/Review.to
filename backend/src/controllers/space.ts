@@ -11,9 +11,8 @@ export const CreateSpace =async (req:Request<{},{},{space:FormData & Space,uid:s
        
 
     const {space:FormData,uid} = req.body
-    console.log(FormData)
     const firebaseuid = uid
-    const {spaceName,spaceCustomMessage,spaceQuestion,spaceImage:spaceimage,spaceSocialLinks,spaceStarRating,spaceTheme,spaceTitle,_id,status}  =FormData 
+    const {spaceName,spaceCustomMessage,spaceQuestion,spaceImage:spaceimage,spaceSocialLinks,spaceStarRating,spaceTitle,_id,status}  =FormData 
     const isStatus =typeof status ==='string'? status === 'true' :status;
     let spaceImage:string;
     let spaceLink:string ; 
@@ -21,8 +20,12 @@ export const CreateSpace =async (req:Request<{},{},{space:FormData & Space,uid:s
     let name = RemoveAnySpaces(spaceName)
      
         try {
-            const resp = await space.countDocuments({ spaceName: SpaceName })
+            const resp:number = await space.countDocuments({ spaceName: SpaceName })
+            console.log(resp)
             spaceLink = `${resp ? name+resp :name}`
+            const result:number = await space.countDocuments({spaceLink:spaceLink})
+            let NoOfSpaces:number = result ? resp + result : result
+            spaceLink =`${result ? name + NoOfSpaces : spaceLink}`
             if(req.file &&  !isStatus){
                 spaceImage = await CloudinaryUpload(req.file)
             let NewSpace = {
@@ -33,7 +36,6 @@ export const CreateSpace =async (req:Request<{},{},{space:FormData & Space,uid:s
                 spaceQuestion: spaceQuestion,
                 spaceSocialLinks:spaceSocialLinks ,
                 spaceStarRating: spaceStarRating,
-                spaceTheme: spaceTheme,
                 spaceLink: spaceLink
             }
             
@@ -53,7 +55,6 @@ export const CreateSpace =async (req:Request<{},{},{space:FormData & Space,uid:s
                 spaceQuestion: spaceQuestion,
                 spaceSocialLinks:spaceSocialLinks ,
                 spaceStarRating: spaceStarRating,
-                spaceTheme: spaceTheme,
                 spaceLink: spaceLink
             }
             
@@ -72,7 +73,6 @@ export const CreateSpace =async (req:Request<{},{},{space:FormData & Space,uid:s
                     spaceQuestion: spaceQuestion,
                     spaceSocialLinks: spaceSocialLinks,
                     spaceStarRating: spaceStarRating,
-                    spaceTheme: spaceTheme,
                     spaceLink: spaceLink
                 })
                 const result = await NewSpace.save()
@@ -145,7 +145,7 @@ export const getSpaceDetails =async(req:Request<{},{},{spacelink:string}>,res:Re
 }
 
 export const submitReivew =async (req:Request,res:Response)=>{
-    const { Message,YourName,YourEmail,checkbox,StarRating,SocialLink,spacelink} = req.body 
+    const { Message,YourName,YourEmail,StarRating,SocialLink,spacelink} = req.body 
     const files = req.files as { [fieldname: string]: Express.Multer.File[] }
     const AttachImage =files["AttachImage"]?.[0] 
     const UploadPhoto= files["UploadPhoto"]?.[0]
@@ -175,7 +175,7 @@ export const submitReivew =async (req:Request,res:Response)=>{
 
         await newReview.save().then(async (resp)=>{
             await space.findOneAndUpdate({spaceLink:spacelink},{$push:{"Reviews":resp._id}}).then(()=>{
-                return res.status(200).json({ message: "create review" })
+                return res.status(200).json({ message: "sumbmited review" })
             })
 
         })
@@ -277,9 +277,9 @@ export const GetMultipleReview = async (req: Request<{}, {}, { spacelink: string
                 path: 'Reviews',
                 match: { WallOfFame: true },
                 select: 'Message UploadPhoto AttachImage YourName createdAt StarRating',
-                options: { sort: { createdAt: -1 } } // Sort reviews by newest first
+                options: { sort: { createdAt: -1 } }
             })
-            .lean(); // Use lean() for better performance if you don't need Mongoose document methods
+           
 
         if (!result) {
             return res.status(404).json({ message: "Space not found" });
@@ -293,7 +293,7 @@ export const GetMultipleReview = async (req: Request<{}, {}, { spacelink: string
     }
 };
 export const iframescript=async(req:Request,res:Response)=>{
-    await res.setHeader('Content-Type', 'application/javascript');
+    res.setHeader('Content-Type', 'application/javascript');
     return res.send(iframeResizerScript);
     
 }

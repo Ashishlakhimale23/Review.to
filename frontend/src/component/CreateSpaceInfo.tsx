@@ -2,7 +2,6 @@ import { ReactElement, useEffect, useRef} from "react"
 import {toast} from "react-toastify"
 import { useRecoilState, useSetRecoilState } from "recoil"
 import {PublishedState, SpaceLogo, SpaceState} from "../store/atoms"
-import {motion} from "framer-motion"
 import zod from "zod"
 import { CustomAxiosError, PublishedSpace, Space } from "../types/types"
 import { api } from "../utils/AxiosApi";
@@ -13,7 +12,7 @@ export function CreateSpaceInfo():ReactElement{
     const [space, setSpace] = useRecoilState(SpaceState);
     const setPublished = useSetRecoilState<PublishedSpace>(PublishedState);
     const navigate = useNavigate()
-    const {spaceName,spaceImage,spaceCustomMessage,spaceSocialLinks,spaceQuestion,spaceStarRating,spaceTheme,spaceTitle} = space
+    const {spaceName,spaceImage,spaceCustomMessage,spaceSocialLinks,spaceQuestion,spaceStarRating,spaceTitle} = space
     const [spaceLogo,setSpaceLogo]  = useRecoilState(SpaceLogo)    
     const ButtonRef = useRef<HTMLButtonElement>(null); 
 
@@ -31,7 +30,6 @@ export function CreateSpaceInfo():ReactElement{
        spaceQuestion:zod.array(zod.string({message:"Requires a array string"})),
        spaceSocialLinks:zod.boolean(),
        spaceStarRating:zod.boolean(),
-       spaceTheme:zod.boolean()
     }) 
 
    const DataVerification =(data:Space)=>{
@@ -51,7 +49,10 @@ export function CreateSpaceInfo():ReactElement{
    const Mutationfunc = useMutation<{spaceName:string,spaceLinks:string},CustomAxiosError,FormData & Space>({
     mutationFn:(formdata:FormData & Space)=>MutationSpaceInfo(formdata),
     onSuccess:(data)=>{
-      console.log(data.spaceName)
+      if(ButtonRef.current){
+      ButtonRef.current.disabled = false,
+      ButtonRef.current.innerText = window.location.pathname === '/createspace'?'Create space':'Edit space'
+    }
       setPublished({
         Published: true,
         PublishedName: data.spaceName,
@@ -62,7 +63,12 @@ export function CreateSpaceInfo():ReactElement{
       return toast.success("space uploaded");
     },
     onError:(error)=>{
+
       setSpace(defaultSpace);
+  if(ButtonRef.current){
+      ButtonRef.current.disabled = false,
+      ButtonRef.current.innerText = window.location.pathname === '/createspace'?'Create space':'Edit space'
+    }
       if (error.response) {
         return toast.error(
           error.response.data.message || "Error creating space"
@@ -74,6 +80,13 @@ export function CreateSpaceInfo():ReactElement{
       }
     }
    })
+
+   if(Mutationfunc.isPending){
+    if(ButtonRef.current){
+      ButtonRef.current.disabled = true,
+      ButtonRef.current.innerText = "Uploading the space"
+    }
+   }
   const handleDataSubmit = async()=>{
 
     const status:boolean = window.location.pathname === '/createspace' 
@@ -89,10 +102,7 @@ export function CreateSpaceInfo():ReactElement{
     if (defaultSpace.spaceImage === spaceImage) {
       return toast.error("upload the space image");
     }
-    if (ButtonRef.current) {
-          ButtonRef.current.disabled = true;
-          ButtonRef.current.textContent = "Uploading space...";
-        }
+    
     try {
       const ParsedData = DataVerification(space);
       if (!ParsedData.success) {
@@ -204,7 +214,6 @@ export function CreateSpaceInfo():ReactElement{
                         setSpace((prevSpace)=>({...prevSpace,spaceQuestion:array}))
                     }}
                     />
-                     
                 ))
             }
             </div>
@@ -214,25 +223,20 @@ export function CreateSpaceInfo():ReactElement{
           </div>
           
           <div className="mb-2">
-            <p>Collect Socail link</p>
+            <p>Collect Twitter link</p>
             <div className={`w-12 h-7 bg-gray-200 rounded-full p-1 flex items-center ${spaceSocialLinks?'justify-end bg-blue-500':'justify-start'}`} onClick={()=>setSpace((prevSpace)=>({...prevSpace,spaceSocialLinks:!spaceSocialLinks}))}>
-            <motion.div layout className={` w-5 h-5 bg-white rounded-full` }></motion.div>
+            <div className={` w-5 h-5 bg-white rounded-full` }></div>
             </div>
           </div>
           
           <div  className="mb-2">
             <p>Collect star ratings</p>
             <div className={`w-12 h-7 bg-gray-200 rounded-full p-1 flex items-center ${spaceStarRating?'justify-end bg-blue-500':'justify-start'}`} onClick={()=>setSpace((prevSpace)=>({...prevSpace,spaceStarRating:!spaceStarRating}))}>
-            <motion.div layout className={` w-5 h-5 bg-white rounded-full` }></motion.div>
+            <div className={` w-5 h-5 bg-white rounded-full` }></div>
             </div>
           </div>
 
-          <div className="mb-2">
-            <p>Choose a theme</p>
-            <div className={`w-12 h-7 bg-gray-200 rounded-full p-1 flex items-center ${spaceTheme?'justify-end bg-blue-500':'justify-start'}`} onClick={()=>setSpace((prevSpace)=>({...prevSpace,spaceTheme:!spaceTheme}))}>
-            <motion.div layout className={` w-5 h-5 bg-white rounded-full` }></motion.div>
-            </div>
-          </div>
+          
 
           <div>
               <button type="submit" disabled={false} className="w-full bg-black text-white py-3 rounded-md" ref={ButtonRef} onClick={handleDataSubmit}>{window.location.pathname === '/createspace'?'Create space':'Edit space'}</button>
