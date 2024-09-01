@@ -165,7 +165,7 @@ export function CreateSpaceInfo():ReactElement{
                 change
                 <input type="file" id="inputimage" hidden  accept=".jpg ,.png ,jpeg" size={5*1024*1024} onChange={(e)=>{
                      const file = e.target.files?.[0] 
-                     console.log(file)
+                    
                      if(file){
                       setSpaceLogo(URL.createObjectURL(file))
                       setSpace((prevSpace)=>({...prevSpace,spaceImage:file}))

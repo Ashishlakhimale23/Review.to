@@ -100,7 +100,7 @@ export function Dashboard():ReactElement{
 
           <div className="space-y-5  md:grid md:grid-cols-2 md:space-y-0 md:gap-y-7 md:gap-x-3 lg:grid-cols-3 ">
             {!space?.length ? (
-              <div>no space</div>
+              <div className="px-2" >no space</div>
             ) : (
               space?.map((element) => (
                 <SpaceDashboard
