@@ -97,7 +97,7 @@ export function DeleteSpace():ReactElement{
           </div>
           <div className="space-y-2">
             <div >
-              <p>Enter the space id <p className="text-red-500">{DeleteValue}</p></p>
+              <p>Enter the space id <p unselectable="off" className="text-red-500">{DeleteValue}</p></p>
               <input type="text" className="w-full outline-none border-gray-400 border-2 rounded-md focus:border-2 focus:border-black px-2 py-1" value={spaceid} onChange={(e)=>{
                     setSpaceid(e.target.value)
                     wrong ? setWrong(false):null

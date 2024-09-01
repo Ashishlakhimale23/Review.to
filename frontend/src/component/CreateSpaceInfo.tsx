@@ -236,8 +236,6 @@ export function CreateSpaceInfo():ReactElement{
             </div>
           </div>
 
-          
-
           <div>
               <button type="submit" disabled={false} className="w-full bg-black text-white py-3 rounded-md" ref={ButtonRef} onClick={handleDataSubmit}>{window.location.pathname === '/createspace'?'Create space':'Edit space'}</button>
           </div>

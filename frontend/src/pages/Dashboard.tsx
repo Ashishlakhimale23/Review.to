@@ -15,27 +15,35 @@ import loading from "../assets/loading.gif"
 import {toast} from "react-toastify"
 export function Dashboard():ReactElement{
   const navigate = useNavigate();
+  let NoOfReview : number = 0
   const { Published, PublishedName, PublishedLink } =
     useRecoilValue<PublishedSpace>(PublishedState);
   const { DeleteStatus } = useRecoilValue(DeleteState);
 
-  async function fetchSpace() {
+  async function fetchSpace():Promise<[{ spaceName: string; spaceImage: string; _id: string; spaceLink: string;reviewCount :number }]>{
     const response = await api.get(`${process.env.BASE_URL}/space/getspace`);
-    return response.data.data.space;
+    return response.data.result;
   }
 
   const {
     data: space,
     isLoading,
+    isSuccess,
     isError,
     error,
   } = useQuery<
-    [{ spaceName: string; spaceImage: string; _id: string; spaceLink: string }],
+    [{ spaceName: string; spaceImage: string; _id: string; spaceLink: string,reviewCount :number }],
     CustomAxiosError
   >({
     queryKey: ["space"],
     queryFn: fetchSpace,
   });
+  
+  if(isSuccess){
+    space.forEach(review=>{
+      NoOfReview += review.reviewCount 
+    })
+  }
 
   if (isLoading) {
     return (
@@ -66,7 +74,7 @@ export function Dashboard():ReactElement{
   }
   return (
     <>
-      <div className="w-full min-h-screen bg-black font-space ">
+      <div className="w-full min-h-screen bg-black font-space pb-5 ">
         <div className=" pt-28 px-2 text-white space-y-6 sm:px-7 lg:px-11 xl:px-14 ">
           <p className=" text-3xl ">Overview</p>
           <div className="space-y-6 md:flex md:space-y-0 md:space-x-3  ">
@@ -74,7 +82,7 @@ export function Dashboard():ReactElement{
               Space : {space?.length}
             </div>
             <div className="px-4 py-7 text-xl border-2 rounded-lg flex-1">
-              Testimonials :
+              Testimonials : {NoOfReview}
             </div>
           </div>
 

@@ -34,7 +34,7 @@ const Space = new mongoose.Schema({
         type:String,
         unique:true
     },
-    Reviews:[{
+   Reviews:[{
         type:mongoose.Schema.Types.ObjectId,
         ref:'Review'
     }],

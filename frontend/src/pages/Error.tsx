@@ -1,3 +1,3 @@
 export function ErrorPage(){
-    return <div className="w-full text-black text-center">Error Occured please try again</div>
+    return <div className="text-2xl w-full text-black text-center">Error Occured please try again</div>
 }

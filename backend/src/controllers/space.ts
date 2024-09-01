@@ -5,8 +5,10 @@ import { User } from "../model/user"
 import { RemoveAnySpaces } from "../utils/RemoveAnySpaces"
 import { CloudinaryUpload } from "../utils/CloudinaryUpload"
 import { Review } from "../model/review"
+
 import generateIframeResizerScript from "../utils/iframeresizer"
 const iframeResizerScript = generateIframeResizerScript();
+
 export const CreateSpace =async (req:Request<{},{},{space:FormData & Space,uid:string}>,res:Response)=>{
 
     const {space:FormData,uid} = req.body
@@ -86,12 +88,39 @@ export const CreateSpace =async (req:Request<{},{},{space:FormData & Space,uid:s
 
 export const GetAllSpaces = async (req:Request<{},{},{uid:string}>,res:Response)=>{
     const firebaseuid = req.body.uid;
+    
     try{
-        await User.findOne({firebaseUid:firebaseuid}).populate("space",'spaceName spaceImage spaceLink').then((result)=>{
-            return res.status(200).json({data:result}).end()
-        }).catch((error)=>{
-            return res.status(500).json({message:"couldnt find the user"})
-        })
+       
+        const user = await User.findOne({ firebaseUid: firebaseuid}).lean();
+  
+        if (!user) {
+            return res.status(500).json({message:"user not found"})
+        }
+
+  const spaces = await space.aggregate([
+    {
+      $match: {
+        _id: { $in: user.space }
+      }
+    },
+    {
+      $lookup: {
+        from: 'reviews',
+        localField: 'Reviews',
+        foreignField: '_id',
+        as: 'reviewDetails'
+      }
+    },
+    {
+      $project: {
+        spaceName: 1,
+        spaceImage: 1,
+        spaceLink: 1,
+        reviewCount: { $size: '$reviewDetails' }
+      }
+    }
+  ]);
+  return res.status(200).json({result:spaces})
     }catch(error){
         return res.status(500).json({message:"internal server issue"})
     }
@@ -181,7 +210,6 @@ export const GetAllReviews=async(req:Request<{},{},{spaceLink:string,uid:string}
     let spaceLink = req.body.spaceLink
     try{
         const result = await space.findOne({spaceLink:spaceLink}).populate("Reviews") 
-        console.log(result)
         return res.status(200).json({result:result})
 
     }catch(error){
