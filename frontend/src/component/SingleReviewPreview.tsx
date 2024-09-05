@@ -62,10 +62,10 @@ export function SingleReviewPreview(){
           <pre>
             <code>
               &lt;script type="text/javascript"
-              src="http://localhost:8000/space/getfile"&gt;&lt;/script&gt;
+              src="https://review-to.onrender.com/space/getfile"&gt;&lt;/script&gt;
               <br />
               &lt;iframe id="resizable-iframe" src=
-              {`http://localhost:5173/${spacelink}/${_id}`} width="100%"
+              {`https://reviewto.netlify.app/${spacelink}/${_id}`} width="100%"
               &gt;&lt;/iframe&gt;
             </code>
           </pre>
@@ -76,8 +76,8 @@ export function SingleReviewPreview(){
             className="w-full p-2 bg-black text-white rounded-md"
             onClick={() => {
               navigator.clipboard.writeText(
-                "<script type='text/javascript' src='http://localhost:8000/space/getfile'></script>\n" +
-                  `<iframe id="resizable-iframe" src='http://localhost:5173/${spacelink}/${_id}' width='100%' frameborder='no' scrolling='no'></iframe>`
+                "<script type='text/javascript' src='https://review-to.onrender.com/space/getfile'></script>\n" +
+                  `<iframe id="resizable-iframe" src='https://reviewto.netlify.app/${spacelink}/${_id}' width='100%' frameborder='no' scrolling='no'></iframe>`
               );
               return toast.success("Copied");
             }}

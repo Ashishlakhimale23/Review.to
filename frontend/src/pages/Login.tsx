@@ -138,7 +138,7 @@ function Login() {
                   return toast.error(resp.data.message);
                 }
               })
-              .catch((error) => {
+              .catch(() => {
                 return toast.error("Internal server issue");
               });
           } catch (error) {

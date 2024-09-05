@@ -38,22 +38,22 @@ export function MultipleReviewPreview({spacelink,setOnComponent}:{spacelink:stri
           </div>
           <div className=" w-full flex  justify-center">
             <a
-              href={`http://localhost:5173/multiple/${spacelink}`}
+              href={`https://reviewto.netlify.app/multiple/${spacelink}`}
               rel="noopener noreferrer"
               target="_blank"
               className="hover:underline hover:text-blue-600"
             >
-              {`http://localhost:5173/multiple/${spacelink}`}
+              {`https://reviewto.netlify.app/multiple/${spacelink}`}
             </a>
           </div>
           <div className="overflow-scroll p-2">
             <pre>
               <code>
                 &lt;script type="text/javascript"
-                src="http://localhost:8000/space/getfile"&gt;&lt;/script&gt;
+                src="https://review-to.onrender.com/space/getfile"&gt;&lt;/script&gt;
                 <br />
                 &lt;iframe id="resizable-iframe" src=
-                {`http://localhost:5173/multiple/${spacelink}`} width="100%"
+                {`https://reviewto.netlify.app/multiple/${spacelink}`} width="100%"
                 &gt;&lt;/iframe&gt;
               </code>
             </pre>
@@ -64,8 +64,8 @@ export function MultipleReviewPreview({spacelink,setOnComponent}:{spacelink:stri
               className="w-full p-2 bg-black text-white rounded-md"
               onClick={() => {
                 navigator.clipboard.writeText(
-                  "<script type='text/javascript' src='http://localhost:8000/space/getfile'></script>\n" +
-                    `<iframe id="resizable-iframe" src='http://localhost:5173/multiple/${spacelink}' width='100%' frameborder='no' scrolling='no'></iframe>`
+                  "<script type='text/javascript' src='https://review-to.onrender.com/space/getfile'></script>\n" +
+                    `<iframe id="resizable-iframe" src='https://reviewto.netlify.app/multiple/${spacelink}' width='100%' frameborder='no' scrolling='no'></iframe>`
                 );
                 return toast.success("Copied");
               }}
