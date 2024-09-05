@@ -36,12 +36,12 @@ export function MultipleReviewPreview({spacelink,setOnComponent}:{spacelink:stri
           <div className=" w-full flex  justify-center">
             <p className="text-2xl font-semibold">Preview</p>
           </div>
-          <div className=" w-full flex  justify-center">
+          <div className=" sm:w-full sm:flex sm:justify-center">
             <a
               href={`https://reviewto.netlify.app/multiple/${spacelink}`}
               rel="noopener noreferrer"
               target="_blank"
-              className="hover:underline hover:text-blue-600"
+              className="hover:underline hover:text-blue-600 break-words"
             >
               {`https://reviewto.netlify.app/multiple/${spacelink}`}
             </a>
