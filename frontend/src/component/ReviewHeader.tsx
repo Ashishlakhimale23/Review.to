@@ -20,7 +20,7 @@ export function ReviewHeader({spaceLink,spaceImage,spaceName}:{spaceLink:string,
               navigate(`/review/${spaceLink}`);
             }}
             className="hover:underline hover:text-blue-400 break-words cursor-pointer"
-          >{`http:localhost:5173/review/${spaceLink}`}</p>
+          >{`http:reviewto.netlify.app/review/${spaceLink}`}</p>
         </div>
         <button
           className="p-2 border-2 border-white w-full rounded-md hover:bg-white hover:text-black sm:w-fit"
