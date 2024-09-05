@@ -1,4 +1,3 @@
-import { boolean } from "joi";
 import mongoose from "mongoose";
 
 const ReviewModel  = new mongoose.Schema({
