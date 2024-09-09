@@ -25,7 +25,7 @@ export function PublishedCard ({spaceName,spaceLink}:{spaceName:string,spaceLink
                     );
                     return toast.success("Link copied");
                   }}
-                >{`http://localhost:5173/review/${spaceLink}`}</p>
+                >{`https://reviewto.netlify.app/review/${spaceLink}`}</p>
               </div>
               <button
                 className="w-full text-white bg-black rounded-md py-2"
