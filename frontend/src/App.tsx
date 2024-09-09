@@ -17,7 +17,7 @@ function App() {
           </QueryClientProvider>
         </Router>
       </RecoilRoot>
-      <ToastContainer theme='dark'/>
+      <ToastContainer theme='dark' />
     </>
   );
 }

@@ -1,6 +1,6 @@
 import { useCallback,useEffect,useState } from "react";
 import {  useNavigate } from "react-router-dom";
-import { ToastContainer,toast } from "react-toastify";
+import { toast } from "react-toastify";
 import {auth} from "../utils/FirebaseAuth"
 import "react-toastify/dist/ReactToastify.css";
 import {z} from "zod"
@@ -80,14 +80,15 @@ function Login() {
                     console.log(error);
                     return toast.error("Internal server issue");
                   });
-                //axios
+          
               })
               .catch((error) => {
+       
                 const errorMessage: string = error.code;
                 switch (errorMessage) {
                   case "auth/invalid-credential":
                     toast.error(
-                      "invaild credentials please check the signin method"
+                      "invaild credentials"
                     );
                     break;
                   case "auth/invalid-email":
@@ -138,10 +139,9 @@ function Login() {
                   return toast.error(resp.data.message);
                 }
               })
-              .catch(() => {
-                return toast.error("Internal server issue");
-              });
+             
           } catch (error) {
+            console.log(error)
             return toast.error("Internal server issue");
           }
         })
@@ -229,18 +229,7 @@ function Login() {
           </div>
         </form>
       </div>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
+      
     </>
   );
 }

@@ -54,10 +54,10 @@ export function Header():ReactElement{
               
               <button className="px-[10px] py-2 hover:bg-white hover:text-black rounded-md w-full text-left"
               onClick={()=>{
-
                 setSettingModal(false)
                 localStorage.removeItem("AccessToken")
-                navigate("/login")
+                localStorage.removeItem("space")
+                window.location.href = '/login'
               }}
               >
                 Signout

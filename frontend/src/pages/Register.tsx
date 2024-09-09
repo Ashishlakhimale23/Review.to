@@ -1,6 +1,6 @@
 import { useCallback,useEffect,useState } from "react";
 import {  useNavigate } from "react-router-dom";
-import { ToastContainer,toast } from "react-toastify";
+import { toast } from "react-toastify";
 import {auth} from "../utils/FirebaseAuth"
 import "react-toastify/dist/ReactToastify.css";
 import {z} from "zod"
@@ -226,18 +226,7 @@ function Signin() {
           </div>
         </form>
       </div>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
+      
     </>
   );
 }
