@@ -47,5 +47,5 @@ export const handlelogin=async(req:Request<{},{},{idtoken:string}>,res:Response)
 }
 
 export const handlecornjob = async(req:Request,res:Response)=>{
-   return res.status(200).send("fine")
+   return res.status(200).json({message:"im fine"}).end()
 }
