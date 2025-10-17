@@ -36,6 +36,7 @@ export function SingleReview(){
       }
     };
   }, []);
+  
   async function getdata(): Promise<Submitform> {
     const response = await axios.post(
       `${process.env.BASE_URL}/space/getsinglereview`,

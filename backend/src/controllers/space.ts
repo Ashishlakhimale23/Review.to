@@ -249,6 +249,11 @@ export const DeleteReview=async(req:Request<{},{},{uid:string,Reviewid:string,Sp
         return res.status(500).json({message:"Fields not provided"})
     }
     try{
+        const user = await User.findOne({firebaseUid:firebaseuid,Review:id});
+        if(!user){
+            return res.status(400)
+        }
+        
         const response = await Review.findByIdAndDelete(id)
         await space.findByIdAndUpdate(id,{$pull:{'Reviews':id}})
         return res.json({message:"deleted"})

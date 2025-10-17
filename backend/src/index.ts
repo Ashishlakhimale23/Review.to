@@ -7,8 +7,13 @@ import { spaceRouter } from "./routes/space";
 config()
 const dburl:string = process.env.DB_URL!
 
-const app = express()
-app.use(cors())
+export const app = express()
+app.use(cors({
+    origin: ['https://reviewto.netlify.app/'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS','PATCH'],
+    credentials: true,
+    optionsSuccessStatus: 200
+}))
 app.use(urlencoded({extended:false}))
 app.use(express.json())
 app.use('/user',UserRouter)

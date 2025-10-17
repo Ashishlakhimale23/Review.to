@@ -76,9 +76,11 @@ api.interceptors.response.use(
         api.defaults.headers.common["Authorization"] = `Bearer ${idToken}`;
         return api(originalRequest);
       }  else {
+        window.location.href = '/login';
         return Promise.reject(error);
       }
     } catch (err) {
+      window.location.href = '/login';
       return Promise.reject(err);
     }
   }
